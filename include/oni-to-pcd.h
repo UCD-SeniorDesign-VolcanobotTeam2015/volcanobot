@@ -12,56 +12,58 @@ Description:	Reads an oni file recorded using the Openni2 library and outputs po
 #include "pcl/io/openni2_grabber.h"
 #include "pcl/point_cloud.h"
 
-/*
-oni to pcd class
-*/
-class oni2pcd {
-public:
+namespace vba {
 	/*
-	constructors
+	oni to pcd class
 	*/
-	oni2pcd () : oniFilesBeingRead(), 
-		pcdWriteDir(),
-		totalFrames(0),
-		framesToRead(0),
-		currentFrame(0),
-		frameSkip(0) {} 
+	class oni2pcd {
+	public:
+		/*
+		constructors
+		*/
+		oni2pcd () : oniFilesBeingRead(), 
+			pcdWriteDir(),
+			totalFrames(0),
+			framesToRead(0),
+			currentFrame(0),
+			frameSkip(0) {} 
 
-	/*
-	read single oni and write pcds
-	*/
-	void readOni (const char* const oniFile, 
-		const int framesToSkip = DEFAULT_FRAME_SKIP);
+		/*
+		read single oni and write pcds
+		*/
+		void readOni (const char* const oniFile, 
+			const int framesToSkip = DEFAULT_FRAME_SKIP);
 
-	// /*
-	// read multiple oni files
-	// */
-	// void readOnis (const std::vector<const char*>  oniFiles[], 
-	// 	const int framesToSkip = DEFAULT_FRAME_SKIP);
+		// /*
+		// read multiple oni files
+		// */
+		// void readOnis (const std::vector<const char*>  oniFiles[], 
+		// 	const int framesToSkip = DEFAULT_FRAME_SKIP);
 
-	// /*
-	// get oni files being read
-	// */
-	// const std::vector<const char*> getOniFilesBeingRead () const;
+		// /*
+		// get oni files being read
+		// */
+		// const std::vector<const char*> getOniFilesBeingRead () const;
 
-	static const int DEFAULT_FRAME_SKIP = 25;
+		static const int DEFAULT_FRAME_SKIP = 25;
 
-private:
-	const std::vector<const char*> oniFilesBeingRead;
-	const std::vector<const char*> pcdWriteDir;
+	private:
+		const std::vector<const char*> oniFilesBeingRead;
+		const std::vector<const char*> pcdWriteDir;
 
-	int totalFrames,
-		framesToRead,
-		currentFrame,
-		frameSkip;
+		int totalFrames,
+			framesToRead,
+			currentFrame,
+			frameSkip;
 
-	typedef pcl::PointCloud<pcl::PointXYZRGBA> Cloud;
-	typedef Cloud::ConstPtr CloudConstPtr;
+		typedef pcl::PointCloud<pcl::PointXYZRGBA> Cloud;
+		typedef Cloud::ConstPtr CloudConstPtr;
 
-	void writeCloudCb (const CloudConstPtr& cloud);
+		void writeCloudCb (const CloudConstPtr& cloud);
 
-	void setFrameSkip (const int framesToSkip);
+		void setFrameSkip (const int framesToSkip);
 
+	};
 };
 
 #endif

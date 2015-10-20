@@ -44,7 +44,7 @@ namespace vba {
 		/*
 		return directory path to write pcd files to
 		*/
-		char* getWriteDirPath (char* const writeToDir);
+		char* getWriteDirPath (char* const writeToDir = NULL);
 
 
 

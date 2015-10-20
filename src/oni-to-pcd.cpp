@@ -26,6 +26,7 @@ int main (int argc, char* argv[]) {
  		std::cout << "\nNot enough arguments provided.\n";
  		return EXIT_FAILURE;
 	}
+	std::cout << '\n' << vba::oni2pcd::getWriteDirPath() << '\n';
 
 	return EXIT_SUCCESS;
 }
@@ -51,7 +52,7 @@ void vba::oni2pcd::readOni (const char* const oniFile,
 	}
 
 	/*
-	create a pointer to a grabber instance, register a callback for the grabber
+	create a pointer to an Openni2 grabber instance, register a callback for the grabber, bind the callback writeCloudCb from our vba::oni2pcd namespace
 	*/
 	pcl::io::OpenNI2Grabber *grabber = new pcl::io::OpenNI2Grabber (oniFile);
 	boost::function<void (const CloudConstPtr&) > f = boost::bind (&vba::oni2pcd::writeCloudCb, _1);
@@ -75,19 +76,22 @@ write pcd files to pcdTemp under given directory path if it exists,
 write pcd files to pcdTemp under executable directoy path alternatively
 */
 char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
-	boost::filesystem::path writeToDirPath (writeToDir);
-	if (boost::filesystem::exists(writeToDirPath) 
-		&& boost::filesystem::is_directory (writeToDirPath)) {
-		boost::filesystem::path pcdWriteToDirPath(writeToDirPath);
-		pcdWriteToDirPath += "pcdTemp";
 
-		writeToDir = new char [std::char_traits<char>::length(writeToDir)];
-		return strcpy (vba::oni2pcd::pcdWriteDirPath, pcdWriteToDirPath.string().c_str());
+	if (writeToDir != NULL) {
+		boost::filesystem::path writeToDirPath (writeToDir);
+
+		if (boost::filesystem::exists(writeToDirPath) 
+			&& boost::filesystem::is_directory (writeToDirPath)) {
+			boost::filesystem::path pcdWriteToDirPath(writeToDirPath);
+			pcdWriteToDirPath += "pcdTemp";
+
+			writeToDir = new char [pcdWriteToDirPath.string().length()];
+			return strcpy (writeToDir, pcdWriteToDirPath.string().c_str());
+		}
 	}
-	else {
-		writeToDir = new char [boost::filesystem::current_path().string().length()];
-		return strcpy (vba::oni2pcd::pcdWriteDirPath, boost::filesystem::current_path().string().c_str());
-	}
+
+	writeToDir = new char [boost::filesystem::current_path().string().length()];
+	return strcpy (writeToDir, boost::filesystem::current_path().string().c_str());
 }
 
 /*

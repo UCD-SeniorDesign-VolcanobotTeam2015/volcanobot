@@ -12,8 +12,8 @@ namespace vba {
 	bool isNull (const char* const file);
 
 	/*
-	oni-to-pcd error messages and handlers
+	handler for empty file pointer
 	*/
-	void handleEmptyFilePtr ();
+	void handleEmptyFilePtr (const char* const filename);
 
 }

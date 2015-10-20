@@ -8,9 +8,14 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include "oni-to-pcd.h"
 #include "errorMsgHandler.h"
 #include "pcl/point_types.h"
+#include "pcl/io/pcd_io.h"
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <boost/filesystem.hpp>
+#include <iomanip>
+#include <string>
+#include <cstring>
 
 int main (int argc, char* argv[]) {
 	/*
@@ -22,38 +27,107 @@ int main (int argc, char* argv[]) {
  		return EXIT_FAILURE;
 	}
 
-
-
 	return EXIT_SUCCESS;
 }
 
 /*
-public members of oni2pcd
+vba::oni2pcd namespace functions
+*/
+int vba::oni2pcd::totalFrames,
+	vba::oni2pcd::framesToRead,
+	vba::oni2pcd::currentFrame,
+	vba::oni2pcd::currentReadFrame,
+	vba::oni2pcd::frameSkip;
+
+/*
+read the given oni file, write the output pcd files to the given directory,
+if no directory is given will write to pcdTemp in the executable directory
 */
 void vba::oni2pcd::readOni (const char* const oniFile, 
+		const char* writeToDirPath,
 		const int framesToSkip) {
 	if (vba::isNull(oniFile)) {
-		handleEmptyFilePtr (oniFile);
+		vba::handleEmptyFilePtr (oniFile);
 	}
 
-	setFrameSkip (framesToSkip);
+	/*
+	create a pointer to a grabber instance, register a callback for the grabber
+	*/
+	pcl::io::OpenNI2Grabber *grabber = new pcl::io::OpenNI2Grabber (oniFile);
+	boost::function<void (const CloudConstPtr&) > f = boost::bind (&vba::oni2pcd::writeCloudCb, _1);
+	boost::signals2::connection c = grabber->registerCallback (f);
 
-	
+	/*
+	setup frame info
+	*/
+	vba::oni2pcd::setFrameSkip (framesToSkip);
+	vba::oni2pcd::setFrameInfo(grabber->getDevice()->getDepthFrameCount());
 
+	while (currentReadFrame < framesToRead) {
+		grabber->start();
+	}
+
+	grabber->stop();
 }
 
 /*
-private members of oni2pcd
+write pcd files to pcdTemp under given directory path if it exists,
+write pcd files to pcdTemp under executable directoy path alternatively
 */
-void vba::oni2pcd::writeCloudCb (const vba::oni2pcd::CloudConstPtr& cloud) {
+char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
+	boost::filesystem::path writeToDirPath (writeToDir);
+	if (boost::filesystem::exists(writeToDirPath) 
+		&& boost::filesystem::is_directory (writeToDirPath)) {
+		boost::filesystem::path pcdWriteToDirPath(writeToDirPath);
+		pcdWriteToDirPath += "pcdTemp";
 
+		writeToDir = new char [std::char_traits<char>::length(writeToDir)];
+		return strcpy (vba::oni2pcd::pcdWriteDirPath, pcdWriteToDirPath.string().c_str());
+	}
+	else {
+		writeToDir = new char [boost::filesystem::current_path().string().length()];
+		return strcpy (vba::oni2pcd::pcdWriteDirPath, boost::filesystem::current_path().string().c_str());
+	}
 }
 
-void setFrameSkip (const int framesToSkip) {
-	if (framesToSkip < DEFAULT_FRAME_SKIP) {
-		frameSkip = DEFAULT_FRAME_SKIP;
+/*
+sets the number of frames to skip in the oni file, if a number less than 
+default, which is minimum, then the frame skip is set to default
+*/
+void vba::oni2pcd::setFrameSkip (const int framesToSkip) {
+	if (framesToSkip < vba::oni2pcd::DEFAULT_FRAME_SKIP) {
+		vba::oni2pcd::frameSkip = vba::oni2pcd::DEFAULT_FRAME_SKIP;
 		return;
 	}
 
-	frameSkip = framesToSkip
+	vba::oni2pcd::frameSkip = framesToSkip;
+}
+
+/*
+total frames := the number of frames in the oni file,
+frames to read := the number of frames to actually create pcd files from
+	derived from total frames / frame skip,
+current frame := current frame in total frames,
+current read frame := current frame to write pcd file for
+*/
+void vba::oni2pcd::setFrameInfo (const int framesInOni) {
+	vba::oni2pcd::totalFrames = framesInOni;
+	vba::oni2pcd::framesToRead = vba::oni2pcd::totalFrames / vba::oni2pcd::frameSkip;
+	vba::oni2pcd::currentFrame = 0;
+	vba::oni2pcd::currentReadFrame = 0;
+}
+
+void vba::oni2pcd::writeCloudCb (const CloudConstPtr& cloud) {
+	static std::string buffer;
+	static std::stringstream ss;
+	static pcl::PCDWriter w;
+
+	if (vba::oni2pcd::currentFrame % vba::oni2pcd::frameSkip == 0) {
+
+		ss << vba::oni2pcd::pcdWriteDirPath << "frame_" << std::setfill ('0') << std::setw(5) << vba::oni2pcd::currentFrame << ".pcd";
+		std::cout <<"Wrote a coud to " << ss.str() << '\n';
+
+		++vba::oni2pcd::currentFrame;
+	}
+	++vba::oni2pcd::currentFrame;
 }

@@ -12,57 +12,56 @@ Description:	Reads an oni file recorded using the Openni2 library and outputs po
 #include "pcl/io/openni2_grabber.h"
 #include "pcl/point_cloud.h"
 
+typedef pcl::PointCloud<pcl::PointXYZRGBA> Cloud;
+typedef Cloud::ConstPtr CloudConstPtr;
+
+
+extern const char* const oniFileBeingRead;
+
 namespace vba {
 	/*
-	oni to pcd class
+	oni to pcd namespace
 	*/
-	class oni2pcd {
-	public:
-		/*
-		constructors
-		*/
-		oni2pcd () : oniFilesBeingRead(), 
-			pcdWriteDir(),
-			totalFrames(0),
-			framesToRead(0),
-			currentFrame(0),
-			frameSkip(0) {} 
+	namespace oni2pcd {
+		extern int totalFrames,
+			framesToRead,
+			currentFrame,
+			currentReadFrame,
+			frameSkip;
+
+		char* pcdWriteDirPath = NULL;
+
+		const int DEFAULT_FRAME_SKIP = 25;
+
 
 		/*
 		read single oni and write pcds
 		*/
 		void readOni (const char* const oniFile, 
+			const char* writeToDirPath = NULL, 
 			const int framesToSkip = DEFAULT_FRAME_SKIP);
 
-		// /*
-		// read multiple oni files
-		// */
-		// void readOnis (const std::vector<const char*>  oniFiles[], 
-		// 	const int framesToSkip = DEFAULT_FRAME_SKIP);
+		/*
+		return directory path to write pcd files to
+		*/
+		char* getWriteDirPath (char* const writeToDir);
 
-		// /*
-		// get oni files being read
-		// */
-		// const std::vector<const char*> getOniFilesBeingRead () const;
 
-		static const int DEFAULT_FRAME_SKIP = 25;
 
-	private:
-		const std::vector<const char*> oniFilesBeingRead;
-		const std::vector<const char*> pcdWriteDir;
-
-		int totalFrames,
-			framesToRead,
-			currentFrame,
-			frameSkip;
-
-		typedef pcl::PointCloud<pcl::PointXYZRGBA> Cloud;
-		typedef Cloud::ConstPtr CloudConstPtr;
-
-		void writeCloudCb (const CloudConstPtr& cloud);
-
+		/*
+		set number of frames to skip
+		*/
 		void setFrameSkip (const int framesToSkip);
 
+		/*
+		assigns totalFrames, framestoRead, and currentFrame based on framesInOni
+		*/
+		void setFrameInfo (const int framesInOni);
+
+		/*
+		callback for our readOniFile, actually writes the pointcloud
+		*/
+		void writeCloudCb (const CloudConstPtr& cloud);	
 	};
 };
 

@@ -16,6 +16,10 @@
 
 #include <pcl/visualization/pcl_visualizer.h>
 
+
+
+
+
 using pcl::visualization::PointCloudColorHandlerGenericField;
 using pcl::visualization::PointCloudColorHandlerCustom;
 
@@ -285,6 +289,13 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
 /* ---[ */
 int main (int argc, char** argv)
 {
+/*
+	vba::CloudStitcher mCloudStitcher;
+
+	mCloudStitcher.setPCDDirectory( "~/Documents/volcanobot/src" );
+*/
+
+
   // Load data
   std::vector<PCD, Eigen::aligned_allocator<PCD> > data;
   loadData (argc, argv, data);
@@ -330,5 +341,6 @@ int main (int argc, char** argv)
     pcl::io::savePCDFile (ss.str (), *result, true);
 
   }
+
 }
 /* ]--- */

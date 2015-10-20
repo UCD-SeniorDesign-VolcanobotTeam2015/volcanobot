@@ -8,48 +8,39 @@ Description:	Reads an oni file recorded using the Openni2 library and outputs po
 #ifndef _ONI_TO_PCD
 #define _ONI_TO_PCD
 
-#include <vector>
 #include "pcl/io/openni2_grabber.h"
 #include "pcl/point_cloud.h"
+#include <vector>
 
 typedef pcl::PointCloud<pcl::PointXYZRGBA> Cloud;
 typedef Cloud::ConstPtr CloudConstPtr;
 
-
-extern const char* const oniFileBeingRead;
-
 namespace vba {
-	/*
-	oni to pcd namespace
-	*/
 	namespace oni2pcd {
-		extern int totalFrames,
-			framesToRead,
-			currentFrame,
-			currentReadFrame,
-			frameSkip;
-
-		char* pcdWriteDirPath = NULL;
-
 		const int DEFAULT_FRAME_SKIP = 25;
 
+		int totalFrames = 0,
+			framesToRead = 0,
+			currentFrame = 0,
+			currentReadFrame = 0,
+			frameSkip = 0;
+
+		char* pcdWriteDirPath = NULL;
 
 		/*
 		read single oni and write pcds
 		*/
-		void readOni (const char* const oniFile, 
-			const char* writeToDirPath = NULL, 
+		void readOni (const char* oniFile, 
+			char* writeToDirPath = NULL, 
 			const int framesToSkip = DEFAULT_FRAME_SKIP);
 
 		/*
 		return directory path to write pcd files to
 		*/
-		char* getWriteDirPath (char* const writeToDir = NULL);
-
-
+		char* getWriteDirPath (char* writeToDir = NULL);
 
 		/*
-		set number of frames to skip
+		set number of frames to skip in writing pcd files
 		*/
 		void setFrameSkip (const int framesToSkip);
 

@@ -17,6 +17,10 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include <string>
 #include <cstring>
 
+/***************************************************************
+here for execution of code in standalone, will be removed once 
+integrated in project
+***************************************************************/
 int main (int argc, char* argv[]) {
 	/*
 	expect 2 additional arguments, ie. <executable> <oniFile> <pcdWriteDir>
@@ -26,26 +30,22 @@ int main (int argc, char* argv[]) {
  		std::cout << "\nNot enough arguments provided.\n";
  		return EXIT_FAILURE;
 	}
-	std::cout << '\n' << vba::oni2pcd::getWriteDirPath() << '\n';
+
+	vba::oni2pcd::readOni (argv[1], argv[2],30);
 
 	return EXIT_SUCCESS;
 }
 
-/*
+/***************************************************************
 vba::oni2pcd namespace functions
-*/
-int vba::oni2pcd::totalFrames,
-	vba::oni2pcd::framesToRead,
-	vba::oni2pcd::currentFrame,
-	vba::oni2pcd::currentReadFrame,
-	vba::oni2pcd::frameSkip;
+***************************************************************/
 
 /*
 read the given oni file, write the output pcd files to the given directory,
 if no directory is given will write to pcdTemp in the executable directory
 */
-void vba::oni2pcd::readOni (const char* const oniFile, 
-		const char* writeToDirPath,
+void vba::oni2pcd::readOni (const char* oniFile, 
+		char* writeToDirPath,
 		const int framesToSkip) {
 	if (vba::isNull(oniFile)) {
 		vba::handleEmptyFilePtr (oniFile);
@@ -63,9 +63,17 @@ void vba::oni2pcd::readOni (const char* const oniFile,
 	*/
 	vba::oni2pcd::setFrameSkip (framesToSkip);
 	vba::oni2pcd::setFrameInfo(grabber->getDevice()->getDepthFrameCount());
+	std::cout << "\nFrames to read " << vba::oni2pcd::framesToRead << '\n';
+
+	/*
+	set write pcd directory path
+	*/
+	vba::oni2pcd::pcdWriteDirPath = vba::oni2pcd::getWriteDirPath(writeToDirPath);
+
+	grabber->start();
 
 	while (currentReadFrame < framesToRead) {
-		grabber->start();
+		boost::this_thread::sleep( boost::posix_time::milliseconds(200 ));
 	}
 
 	grabber->stop();
@@ -83,7 +91,8 @@ char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
 		if (boost::filesystem::exists(writeToDirPath) 
 			&& boost::filesystem::is_directory (writeToDirPath)) {
 			boost::filesystem::path pcdWriteToDirPath(writeToDirPath);
-			pcdWriteToDirPath += "pcdTemp";
+			pcdWriteToDirPath += "/pcdTemp";
+			boost::filesystem::create_directory(pcdWriteToDirPath);
 
 			writeToDir = new char [pcdWriteToDirPath.string().length()];
 			return strcpy (writeToDir, pcdWriteToDirPath.string().c_str());
@@ -91,6 +100,12 @@ char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
 	}
 
 	writeToDir = new char [boost::filesystem::current_path().string().length()];
+
+	boost::filesystem::path pcdWriteToDirPath (boost::filesystem::current_path());
+	pcdWriteToDirPath += "/pcdTemp";
+
+	boost::filesystem::create_directory(pcdWriteToDirPath);
+
 	return strcpy (writeToDir, boost::filesystem::current_path().string().c_str());
 }
 
@@ -121,17 +136,24 @@ void vba::oni2pcd::setFrameInfo (const int framesInOni) {
 	vba::oni2pcd::currentReadFrame = 0;
 }
 
+/*
+callback for our instance of the Openni2 grabber, writes the 
+point clouds corresponding to currentReadFrame
+*/
 void vba::oni2pcd::writeCloudCb (const CloudConstPtr& cloud) {
-	static std::string buffer;
-	static std::stringstream ss;
-	static pcl::PCDWriter w;
+	std::string buffer;
+	std::stringstream ss;
+	pcl::PCDWriter w;
 
 	if (vba::oni2pcd::currentFrame % vba::oni2pcd::frameSkip == 0) {
 
-		ss << vba::oni2pcd::pcdWriteDirPath << "frame_" << std::setfill ('0') << std::setw(5) << vba::oni2pcd::currentFrame << ".pcd";
-		std::cout <<"Wrote a coud to " << ss.str() << '\n';
+		ss << vba::oni2pcd::pcdWriteDirPath << "/frame_" << std::setfill ('0') << std::setw(6) << vba::oni2pcd::currentReadFrame << ".pcd";
+		// ss << "frame_" << std::setfill ('0') << std::setw(5) << vba::oni2pcd::currentReadFrame << ".pcd";
 
-		++vba::oni2pcd::currentFrame;
+		std::cout <<"Wrote a coud to " << ss.str() << '\n';
+		w.writeBinaryCompressed (ss.str(), *cloud);
+		++vba::oni2pcd::currentReadFrame;
 	}
+
 	++vba::oni2pcd::currentFrame;
 }

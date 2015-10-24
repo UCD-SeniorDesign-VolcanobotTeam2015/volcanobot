@@ -8,8 +8,8 @@ int main( int argc , char* argv[] )
 	vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
 
 	std::string dir( argv[1] );
-	mCloudStitcher->setPCDDirectory( dir );
-	mCloudStitcher->stitchPCDFiles();
+	mCloudStitcher->setOutputPath( "/dev/null" );
+	mCloudStitcher->stitchPCDFiles( dir );
 	delete mCloudStitcher;
 
 

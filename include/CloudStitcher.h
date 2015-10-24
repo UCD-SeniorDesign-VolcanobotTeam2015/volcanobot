@@ -12,6 +12,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 
 //point cloud data types includes
 #include <boost/make_shared.hpp>
@@ -45,6 +46,7 @@
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
 #include <boost/locale.hpp>
+#include <boost/lexical_cast.hpp>
 
 
 #ifndef CLOUDSTITCHER_H_
@@ -53,6 +55,8 @@
 namespace vba
 {
 
+	//This enum just defines the different number of threads that can be used in the stitching of
+	//pcd files.
 	enum THREAD_COUNT
 	{
 		THREAD_1,
@@ -94,7 +98,19 @@ namespace vba
 			 * 			the target pcd files.
 			 * @return: 0 if the operation was successful, -1 if not.
 			 */
-			int setPCDDirectory( const std::string directory_path );
+			int setPCDDirectory( std::string directory_path );
+
+			/*Public facing function that allows the user to select which directory contains target pcd files.
+			 * The function then checks the existence of the directory and extracts all files with .pcd file
+			 * extension.
+			 *
+			 * @param: The string containing the absolute path where the user wants the final stitched cloud
+			 *			to be sent to.
+			 * @return: 0 if the operation was successful, -1 if not.
+			 */
+			int setOutputPath( const std::string output_path );
+
+
 
 			//methods to toggle configuration settings
 
@@ -111,7 +127,7 @@ namespace vba
 			 *
 			 * @return: 0 if operation was successful, -1 otherwise
 			 */
-			int stitchPCDFiles();
+			int stitchPCDFiles( const std::string directory_path );
 
 
 			//class setters and getters
@@ -127,7 +143,9 @@ namespace vba
 		private:
 
 			std::string pcd_files_directory;
+			std::string output_path;
 			std::vector<std::string>* pcd_filenames;
+			std::vector<std::string>* temp_directories;
 
 
 			//configurations
@@ -141,7 +159,7 @@ namespace vba
 			 * @param: the total number of files to be stitched by the threads
 			 * @return: none
 			 */
-			void setupWorkerThreads( unsigned int thread_count , unsigned int num_files );
+			void setupWorkerThreads( unsigned int thread_count , unsigned int num_files , std::string output_dir );
 
 
 			//This is a class that wraps all the operations associated with one thread. Since there can be multiple
@@ -156,7 +174,7 @@ namespace vba
 					 * @param: a copy of the vector containing the pcd files to stich together
 					 * @return: none
 					 */
-					CloudStitchingThread( const std::vector< std::string >& files );
+					CloudStitchingThread( const std::vector< std::string >& files , std::string output_dir );
 
 					/*Default destructor that deallocates the objects allocated dynamically throughout this instances
 					 * lifespan
@@ -182,15 +200,17 @@ namespace vba
 					 */
 					bool isFinished();
 
-					/*
+					/*This function spawns another thread whose only purpose is to wait for the worker thread to
+					 * finish. This allows the start function of this class to be non-blocking.
 					 *
-					 * @param:
-					 * @param:
-					 * @return:
+					 * @param: none
+					 * @return: none
 					 */
 					void detectThreadExit();
 
-					/*
+					/*This is the function supplied to the worker thread. It contains all the code required to stitch the
+					 * target pcd files together. This function will run until all clouds have been stitched and will then
+					 * return and delete the worker thread.
 					 *
 					 * @param:
 					 * @param:
@@ -202,6 +222,7 @@ namespace vba
 
 					bool worker_thread_is_finished;
 					std::vector< std::string >* file_list;
+					std::string output_directory;
 
 					boost::thread worker_thread;
 					boost::thread exit_detect_thread;

@@ -8,8 +8,8 @@ Description:	Reads an oni file recorded using the Openni2 library and outputs po
 #ifndef _ONI_TO_PCD
 #define _ONI_TO_PCD
 
-#include "pcl/io/openni2_grabber.h"
-#include "pcl/point_cloud.h"
+#include <pcl/io/openni2_grabber.h>
+#include <pcl/point_cloud.h>
 #include <vector>
 
 typedef pcl::PointCloud<pcl::PointXYZRGBA> Cloud;
@@ -23,7 +23,8 @@ namespace vba {
 			framesToRead = 0,
 			currentFrame = 0,
 			currentReadFrame = 0,
-			frameSkip = 0;
+			frameSkip = 0,
+			timeout = 0;
 
 		char* pcdWriteDirPath = NULL;
 
@@ -48,6 +49,11 @@ namespace vba {
 		assigns totalFrames, framestoRead, and currentFrame based on framesInOni
 		*/
 		void setFrameInfo (const int framesInOni);
+
+		/*
+		sets timeout based on processing
+		*/
+		void setTimeout (const int to);
 
 		/*
 		callback for our readOniFile, actually writes the pointcloud

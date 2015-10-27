@@ -8,10 +8,13 @@ include_directories(${PCL_INCLUDE_DIRS})
 include_directories(../include)
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} -O1")
 
 add_executable ( Cloud_Stitcher 
 	main.cpp 
 	CloudStitcher.cpp
-	../include/CloudStitcher.h)
+	../include/CloudStitcher.h
+	PCDRegistration.cpp
+	../include/PCDRegistration.h)
 target_link_libraries ( Cloud_Stitcher ${PCL_LIBRARIES})

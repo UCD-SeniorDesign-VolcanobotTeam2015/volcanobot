@@ -13,30 +13,11 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <cstdlib>
+#include <sstream>
 
-//point cloud data types includes
-#include <boost/make_shared.hpp>
-#include <pcl/point_types.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_representation.h>
-
-//include to perform standard io
-#include <pcl/io/pcd_io.h>
-
-//includes for point cloud filters
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/filters/filter.h>
-
-//include for surface normals operations
-#include <pcl/features/normal_3d.h>
-
-//includes for point cloud registration (stitching)
-#include <pcl/registration/icp.h>
-#include <pcl/registration/icp_nl.h>
-#include <pcl/registration/transforms.h>
-
-//include for the actual viewing of point clouds on screen
-#include <pcl/visualization/pcl_visualizer.h>
+//include this file for the pcd registration stuff
+#include "PCDRegistration.h"
 
 //include some of the boost library to help with searching filesystem directories
 #include <boost/filesystem.hpp>
@@ -223,6 +204,8 @@ namespace vba
 					bool worker_thread_is_finished;
 					std::vector< std::string >* file_list;
 					std::string output_directory;
+					std::string output_filename;
+					PCDRegistration* mPCDRegistration;
 
 					boost::thread worker_thread;
 					boost::thread exit_detect_thread;

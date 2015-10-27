@@ -17,7 +17,7 @@ namespace vba
 		this->output_path = "";
 		this->temp_directories = new std::vector< std::string >();
 
-		this->num_threads = THREAD_COUNT::THREAD_1;
+		this->num_threads = THREAD_1;
 		this->multithreading_enabled = true;
 
 	}
@@ -26,9 +26,9 @@ namespace vba
 	{
 		delete pcd_filenames;
 
-		for( auto itr = this->worker_threads->begin() ; itr != this->worker_threads->end() ; ++itr )
+		for( int i = 0 ; i < worker_threads->size() ; ++i )
 		{
-			CloudStitcher::CloudStitchingThread* temp = *itr;
+			CloudStitcher::CloudStitchingThread* temp = this->worker_threads->at(i);
 			delete temp;
 		}
 	}
@@ -101,31 +101,31 @@ namespace vba
 
 		if( num_files <= 10 )
 		{
-			this->num_threads = THREAD_COUNT::THREAD_1;
+			this->num_threads = THREAD_1;
 		}
 		else if( num_files <= 20 )
 		{
-			this->num_threads = THREAD_COUNT::THREAD_2;
+			this->num_threads = THREAD_2;
 		}
 		else if( num_files <= 40 )
 		{
-			this->num_threads = THREAD_COUNT::THREAD_4;
+			this->num_threads = THREAD_4;
 		}
 		else if( num_files <= 80 )
 		{
-			this->num_threads = THREAD_COUNT::THREAD_8;
+			this->num_threads = THREAD_8;
 		}
 		else if( num_files <= 160 )
 		{
-			this->num_threads = THREAD_COUNT::THREAD_16;
+			this->num_threads = THREAD_16;
 		}
 		else if( num_files > 160 )
 		{
-			this->num_threads = THREAD_COUNT::THREAD_16;
+			this->num_threads = THREAD_16;
 		}
 		else
 		{
-			this->num_threads = THREAD_COUNT::THREAD_1;
+			this->num_threads = THREAD_1;
 		}
 
 		return 0;
@@ -134,25 +134,23 @@ namespace vba
 
 	int CloudStitcher::setOutputPath( const std::string output_path )
 	{
-		std::string path;
-		std::string filename;
+		//make a boost path out of the provided path
+		boost::filesystem::path fullname( output_path );
 
-		//first we must split the filename from the directory path
-		std::size_t found = output_path.find_last_of( "/\\" );
-		if( found != std::string::npos )
+		//split up the path into the file's parent directory path and the filename
+		boost::filesystem::path parent_path( fullname.parent_path() );
+		boost::filesystem::path basename( fullname.filename() );
+
+		//check to make sure the parent directory actually exists and exit otherwise
+		if( !boost::filesystem::is_directory( parent_path ) )
 		{
-			//make a substring of just the path and make sure it exists
-			path = output_path.substr( 0 , found );
-			if( !boost::filesystem::exists( output_path ) )
-			{
-				std::cerr << "Error: specified output directory does not exist.\n";
-				return -1;
-			}
+			std::cerr << "Error: specified output directory does not exist: " << parent_path.string() << "\n";
+			return -1;
 		}
 
-		//make a substring of just the filename and make sure it isn't empty
-		filename = output_path.substr( found + 1 );
-		if( filename.size() < 1 )
+		//check to make sure the user gave us an actual filename to use
+		std::string filename = basename.string();
+		if( filename.size() < 2 )
 		{
 			std::cerr << "Error: no filename was specified.\n";
 			return -1;
@@ -192,7 +190,17 @@ namespace vba
 			//TODO we need to catch errors thrown by rename() like trying to put the file in a dir without the right access permissions
 
 			//send our single created file to the desired output location
-			boost::filesystem::rename( this->pcd_filenames->at(0) , this->output_path );
+			try
+			{
+				boost::filesystem::rename( this->pcd_filenames->at(0) , this->output_path );
+			}
+			catch( boost::filesystem::filesystem_error const &e )
+			{
+				std::cerr << "Error: Problem moving final pcd file to output directory. Boost filesystem threw error: " << e.what() << "\n";
+				return -1;
+			}
+
+			std::cout << "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
 			return 0;
 		}
 
@@ -205,56 +213,59 @@ namespace vba
 		if( temp_dir_count == 0 )
 		{
 			std::string temp_dir_name = this->pcd_files_directory;
-			temp_dir_name += "temp_dir1";
+			temp_dir_name += "temp_dir1/";
 			this->temp_directories->push_back( temp_dir_name );
 			boost::filesystem::path temp_dir( temp_dir_name );
-			if( boost::filesystem::create_directory( temp_dir ))
+			if( !boost::filesystem::create_directory( temp_dir ))
 			{
-				std::cout << "Success creating temp dir: " << temp_dir_name << "\n";
+				std::cerr << "Error: Problem creating temporary directory.\n";
+				return -1;
 			}
-			//TODO create the new temp dir on the filesystem
 		}
+
 		//if this is not the first recursive step then we will name the new temp dir based on how many
 		//times we have recursed
 		else
 		{
-			std::string new_temp_dir_name = this->pcd_files_directory;
-			new_temp_dir_name += "temp_dir";
-			new_temp_dir_name += temp_dir_count + 1;
+			std::stringstream new_temp_dir_name;
+			new_temp_dir_name << this->pcd_files_directory;
+			new_temp_dir_name << "temp_dir";
+			new_temp_dir_name << ( temp_dir_count + 1 );
+			new_temp_dir_name << "/";
 
-			boost::filesystem::path temp_dir( new_temp_dir_name );
-			if( boost::filesystem::create_directory( temp_dir ))
+			boost::filesystem::path temp_dir( new_temp_dir_name.str() );
+			if( !boost::filesystem::create_directory( temp_dir ))
 			{
-				std::cout << "Success creating temp dir: " << new_temp_dir_name << "\n";
+				std::cerr << "Error: Problem creating temporary directory.\n";
+				return -1;
 			}
 
 			//we have to keep track of the paths to all these temp dirs for cleanup later
-			this->temp_directories->push_back( new_temp_dir_name );
+			this->temp_directories->push_back( new_temp_dir_name.str() );
 
-			//TODO create the new temp dir on the filesystem
 		}
 
 
 
 		switch( this->num_threads )
 		{
-		case THREAD_COUNT::THREAD_1:
+		case THREAD_1:
 			this->setupWorkerThreads( 1 , this->getNumberofFilesRead() , this->temp_directories->back() );
 			break;
 
-		case THREAD_COUNT::THREAD_2:
+		case THREAD_2:
 			this->setupWorkerThreads( 2 , this->getNumberofFilesRead() , this->temp_directories->back() );
 			break;
 
-		case THREAD_COUNT::THREAD_4:
+		case THREAD_4:
 			this->setupWorkerThreads( 4 , this->getNumberofFilesRead() , this->temp_directories->back() );
 			break;
 
-		case THREAD_COUNT::THREAD_8:
+		case THREAD_8:
 			this->setupWorkerThreads( 8 , this->getNumberofFilesRead() , this->temp_directories->back() );
 			break;
 
-		case THREAD_COUNT::THREAD_16:
+		case THREAD_16:
 			this->setupWorkerThreads( 16 , this->getNumberofFilesRead() , this->temp_directories->back() );
 			break;
 
@@ -263,10 +274,13 @@ namespace vba
 			break;
 		}
 
+		std::cout << "Read in " << this->pcd_filenames->size() << " files.\n";
+		std::cout << "Spinning up " << this->worker_threads->size() << " threads.\n\n";
+
 		//spin up all the allocated threads
-		for( auto itr = this->worker_threads->begin() ; itr != this->worker_threads->end() ; ++itr )
+		for( unsigned int i = 0 ; i < this->worker_threads->size() ; ++i )
 		{
-			CloudStitchingThread* temp = *itr;
+			CloudStitchingThread* temp = this->worker_threads->at( i );
 			temp->start();
 		}
 
@@ -275,7 +289,7 @@ namespace vba
 		//it finishes
 		while( this->worker_threads->size() > 0 )
 		{
-			for( auto itr = this->worker_threads->begin() ; itr != this->worker_threads->end() ; ++itr )
+			for( std::vector< CloudStitchingThread* >::iterator itr = this->worker_threads->begin() ; itr != this->worker_threads->end() ; ++itr )
 			{
 				CloudStitchingThread* temp = *itr;
 				if( temp->isFinished() )
@@ -287,10 +301,27 @@ namespace vba
 			}
 		}
 
+		//make sure we clear out the pcd filenames held in the vector so they don't get mixed up with our next operation
+		this->pcd_filenames->clear();
 
-		//TODO add in the recursive function call here
+		//This is where we hit the recursive part. We now call this function again to start combining the newly stitched pcd files
+		//contained in the newly created temporary directory
+		//this->stitchPCDFiles( this->temp_directories->back() );
 
-		//TODO after we hit the base case, we need to cleanup those temp directories that were created as we unwind the stack
+		//If we have reached this section code, then we have hit the base case and are starting to unwind the stack. All we have to
+		//do is delete all of those temporary directories we created.
+		try
+		{
+			boost::filesystem::remove_all( this->temp_directories->back() );
+			this->temp_directories->erase( this->temp_directories->end() );
+		}
+		catch( boost::filesystem::filesystem_error const &e )
+		{
+			std::cerr << "Error: Failed to delete a temporary directory\n";
+		}
+
+
+		return 0;
 	}
 
 	void CloudStitcher::enableMultithreading( const bool choice )
@@ -314,7 +345,7 @@ namespace vba
 		unsigned int offset = (int)std::ceil( num_files / thread_count );
 
 		//current offset will be a changing variable representing where in the filename array we are looking at
-		auto current_offset = this->pcd_filenames->begin();
+		std::vector< std::string >::iterator current_offset = this->pcd_filenames->begin();
 
 		//if we are using one thread, then just copy all of the filenames into the single thread
 		if( thread_count == 1 )
@@ -328,7 +359,7 @@ namespace vba
 		{
 			for( int i = 0 ; i < thread_count - 1 ; ++i )
 			{
-				auto last = ( current_offset + offset );
+				std::vector< std::string >::iterator last = ( current_offset + offset );
 				std::vector< std::string > param_vec( current_offset , last );
 				this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir ));
 				current_offset = last;
@@ -356,11 +387,19 @@ namespace vba
 
 		//make sure we save a copy of the path to the output directory
 		this->output_directory = output_dir;
+
+		//create the absolute path to the final pcd file that is a creation of all the stitching
+		this->output_filename = output_dir;
+		boost::filesystem::path filename( this->file_list->at(0) );
+		this->output_filename += filename.filename().string();
+
+		this->mPCDRegistration = new PCDRegistration( files , this->output_filename );
 	}
 
 	CloudStitcher::CloudStitchingThread::~CloudStitchingThread()
 	{
 		delete file_list;
+		delete mPCDRegistration;
 	}
 
 	void CloudStitcher::CloudStitchingThread::start()
@@ -395,21 +434,7 @@ namespace vba
 
 	void CloudStitcher::CloudStitchingThread::stitchTargetClouds()
 	{
-		boost::filesystem::path current_path( this->file_list->at(0) );
-		std::string curr_file = boost::filesystem::basename( current_path );
-		std::string filename = this->output_directory;
-		filename += curr_file;
-		std::cout << "new file: " << filename << "\n";
-		std::ofstream outfile( filename );
-		outfile << "hello world\n";
-		outfile.close();
-
-		/*
-		std::cout << "worker is going to sleep\n";
-		boost::posix_time::seconds workTime( 10);
-		boost::this_thread::sleep( workTime );
-		std::cout << "worker woke up\n";
-		*/
+		this->mPCDRegistration->start();
 	}
 
 } /* namespace vba */

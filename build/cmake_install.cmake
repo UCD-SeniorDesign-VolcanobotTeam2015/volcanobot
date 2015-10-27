@@ -1,4 +1,4 @@
-# Install script for directory: /home/paul/Documents/volcanobot
+# Install script for directory: /home/paul/Documents/volcanobot/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -213,7 +213,6 @@ CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QApplication
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QButtonGroup
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QFileDialog
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QFrame
-CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QHBoxLayout
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QHeaderView
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QLabel
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/QMainWindow
@@ -236,7 +235,6 @@ CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qabstractspinbox.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qaction.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qactiongroup.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qapplication.h
-CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qboxlayout.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qbrush.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qbuttongroup.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qcolor.h
@@ -250,15 +248,12 @@ CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qfont.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qfontinfo.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qfontmetrics.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qframe.h
-CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qgridlayout.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qheaderview.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qicon.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qimage.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qitemselectionmodel.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qkeysequence.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qlabel.h
-CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qlayout.h
-CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qlayoutitem.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qmacdefines_mac.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qmainwindow.h
 CMakeFiles/ui.dir/mainwindow.cpp.o: /usr/include/qt4/QtGui/qmatrix.h

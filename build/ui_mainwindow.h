@@ -14,7 +14,6 @@
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
 #include <QtGui/QFrame>
-#include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
@@ -35,8 +34,6 @@ public:
     QWidget *centralWidget;
     QLabel *label;
     QRadioButton *radioButton;
-    QWidget *layoutWidget;
-    QHBoxLayout *horizontalLayout;
     QProgressBar *progressBar;
     QFrame *frame;
     QPushButton *Cancel;
@@ -77,14 +74,6 @@ public:
         radioButton->setGeometry(QRect(470, 60, 128, 22));
         radioButton->setChecked(true);
         radioButton->setAutoRepeat(true);
-        layoutWidget = new QWidget(centralWidget);
-        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 20, 531, 29));
-        horizontalLayout = new QHBoxLayout(layoutWidget);
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
         progressBar = new QProgressBar(centralWidget);
         progressBar->setObjectName(QString::fromUtf8("progressBar"));
         progressBar->setGeometry(QRect(30, 60, 118, 23));
@@ -103,11 +92,13 @@ public:
         Browse = new QPushButton(frame);
         Browse->setObjectName(QString::fromUtf8("Browse"));
         Browse->setGeometry(QRect(191, 20, 173, 27));
+        Browse->raise();
+        Start->raise();
+        Cancel->raise();
         MainWindow->setCentralWidget(centralWidget);
         frame->raise();
         label->raise();
         radioButton->raise();
-        layoutWidget->raise();
         progressBar->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -118,7 +109,6 @@ public:
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
         MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
-        MainWindow->insertToolBarBreak(mainToolBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);

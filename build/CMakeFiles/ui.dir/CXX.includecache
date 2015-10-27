@@ -21,8 +21,6 @@ QtGui/QButtonGroup
 -
 QtGui/QFrame
 -
-QtGui/QHBoxLayout
--
 QtGui/QHeaderView
 -
 QtGui/QLabel
@@ -2466,10 +2464,6 @@ qfiledialog.h
 qframe.h
 /usr/include/qt4/QtGui/qframe.h
 
-/usr/include/qt4/QtGui/QHBoxLayout
-qboxlayout.h
-/usr/include/qt4/QtGui/qboxlayout.h
-
 /usr/include/qt4/QtGui/QHeaderView
 qheaderview.h
 /usr/include/qt4/QtGui/qheaderview.h
@@ -2600,14 +2594,6 @@ QtGui/qrgb.h
 QtGui/qtransportauth_qws.h
 -
 
-/usr/include/qt4/QtGui/qboxlayout.h
-QtGui/qlayout.h
--
-QtGui/qwidget.h
--
-limits.h
--
-
 /usr/include/qt4/QtGui/qbrush.h
 QtCore/qpair.h
 -
@@ -2720,14 +2706,6 @@ QtCore/qrect.h
 QtGui/qwidget.h
 -
 
-/usr/include/qt4/QtGui/qgridlayout.h
-QtGui/qlayout.h
--
-QtGui/qwidget.h
--
-limits.h
--
-
 /usr/include/qt4/QtGui/qheaderview.h
 QtGui/qabstractitemview.h
 -
@@ -2774,32 +2752,6 @@ QtCore/qstring.h
 
 /usr/include/qt4/QtGui/qlabel.h
 QtGui/qframe.h
--
-
-/usr/include/qt4/QtGui/qlayout.h
-QtCore/qobject.h
--
-QtGui/qlayoutitem.h
--
-QtGui/qsizepolicy.h
--
-QtCore/qrect.h
--
-QtCore/qmargins.h
--
-limits.h
--
-QtGui/qboxlayout.h
--
-QtGui/qgridlayout.h
--
-
-/usr/include/qt4/QtGui/qlayoutitem.h
-QtGui/qsizepolicy.h
--
-QtCore/qrect.h
--
-limits.h
 -
 
 /usr/include/qt4/QtGui/qmacdefines_mac.h

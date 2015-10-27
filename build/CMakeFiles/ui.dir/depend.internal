@@ -488,7 +488,6 @@ CMakeFiles/ui.dir/mainwindow.cpp.o
  /usr/include/qt4/QtGui/QButtonGroup
  /usr/include/qt4/QtGui/QFileDialog
  /usr/include/qt4/QtGui/QFrame
- /usr/include/qt4/QtGui/QHBoxLayout
  /usr/include/qt4/QtGui/QHeaderView
  /usr/include/qt4/QtGui/QLabel
  /usr/include/qt4/QtGui/QMainWindow
@@ -511,7 +510,6 @@ CMakeFiles/ui.dir/mainwindow.cpp.o
  /usr/include/qt4/QtGui/qaction.h
  /usr/include/qt4/QtGui/qactiongroup.h
  /usr/include/qt4/QtGui/qapplication.h
- /usr/include/qt4/QtGui/qboxlayout.h
  /usr/include/qt4/QtGui/qbrush.h
  /usr/include/qt4/QtGui/qbuttongroup.h
  /usr/include/qt4/QtGui/qcolor.h
@@ -525,15 +523,12 @@ CMakeFiles/ui.dir/mainwindow.cpp.o
  /usr/include/qt4/QtGui/qfontinfo.h
  /usr/include/qt4/QtGui/qfontmetrics.h
  /usr/include/qt4/QtGui/qframe.h
- /usr/include/qt4/QtGui/qgridlayout.h
  /usr/include/qt4/QtGui/qheaderview.h
  /usr/include/qt4/QtGui/qicon.h
  /usr/include/qt4/QtGui/qimage.h
  /usr/include/qt4/QtGui/qitemselectionmodel.h
  /usr/include/qt4/QtGui/qkeysequence.h
  /usr/include/qt4/QtGui/qlabel.h
- /usr/include/qt4/QtGui/qlayout.h
- /usr/include/qt4/QtGui/qlayoutitem.h
  /usr/include/qt4/QtGui/qmacdefines_mac.h
  /usr/include/qt4/QtGui/qmainwindow.h
  /usr/include/qt4/QtGui/qmatrix.h

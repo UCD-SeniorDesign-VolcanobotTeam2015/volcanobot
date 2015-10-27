@@ -113,17 +113,6 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>531</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout"/>
-   </widget>
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
@@ -191,11 +180,13 @@
       <string>Browse</string>
      </property>
     </widget>
+    <zorder>Browse</zorder>
+    <zorder>Start</zorder>
+    <zorder>Cancel</zorder>
    </widget>
    <zorder>frame</zorder>
    <zorder>label</zorder>
    <zorder>radioButton</zorder>
-   <zorder>layoutWidget</zorder>
    <zorder>progressBar</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -220,7 +211,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>

@@ -40,6 +40,8 @@
 #include <pcl/io/oni_grabber.h>
 #include <pcl/io/pcd_io.h>
 #include <vector>
+#include "mainwindow.h"
+#include <QApplication>
 
 using namespace std;
 using namespace pcl;
@@ -74,6 +76,12 @@ cloud_cb (const CloudConstPtr& cloud)
 int
 main (int argc, char **argv)
 {
+QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    return a.exec();
+/*
   print_info ("Convert an ONI file to PCD format. For more information, use: %s -h\n", argv[0]);
 
   if (argc < 2)
@@ -94,4 +102,5 @@ main (int argc, char **argv)
 
   delete grabber;
   return (0);
+*/
 }

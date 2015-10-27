@@ -34,15 +34,15 @@ int main (int argc, char* argv[]) {
 
 	// // int threadTimout = 
 
-	vba::oni2pcd::readOni (argv[1], argv[2]);
-	// boost::thread oni2pcd(vba::oni2pcd::readOni, argv[1], argv[2], 0);
+	// vba::oni2pcd::readOni (argv[1], argv[2]);
+	boost::thread oni2pcd(vba::oni2pcd::readOni, argv[1], argv[2], 0);
 
-	// if (oni2pcd.try_join_for (boost::chrono::minutes(2))) {
-	// 	std::cout << "\nDone\n";
-	// } else {
-	// 	std::cout << "\nBADDDDD!!!!!\n";
-	// 	return EXIT_FAILURE;
-	// }
+	if (oni2pcd.try_join_for (boost::chrono::minutes(2))) {
+		std::cout << "\nDone\n";
+	} else {
+		std::cout << "\nBADDDDD!!!!!\n";
+		return EXIT_FAILURE;
+	}
 
 	return EXIT_SUCCESS;
 }

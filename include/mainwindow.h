@@ -29,6 +29,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QString oniFileName;
 };
 
 #endif // MAINWINDOW_H

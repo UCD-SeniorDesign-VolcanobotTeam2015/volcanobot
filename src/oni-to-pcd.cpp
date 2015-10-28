@@ -118,7 +118,6 @@ write pcd files to pcdTemp under given directory path if it exists,
 write pcd files to pcdTemp under executable directoy path alternatively
 */
 char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
-
 	if (writeToDir != NULL) {
 		boost::filesystem::path writeToDirPath (writeToDir);
 
@@ -132,9 +131,7 @@ char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
 			return strcpy (writeToDir, pcdWriteToDirPath.string().c_str());
 		}
 	}
-
 	writeToDir = new char [boost::filesystem::current_path().string().length()];
-
 	boost::filesystem::path pcdWriteToDirPath (boost::filesystem::current_path());
 	pcdWriteToDirPath += "/pcdTemp";
 

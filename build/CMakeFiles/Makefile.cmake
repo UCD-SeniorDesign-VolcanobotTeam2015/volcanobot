@@ -129,6 +129,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "__/include/moc_errorMsgHandler.cxx_parameters"
   "__/include/moc_oni-to-pcd.cxx_parameters"
   "__/include/moc_mainwindow.cxx_parameters"
+  "__/include/moc_CloudStitcher.cxx_parameters"
+  "__/include/moc_PCDRegistration.cxx_parameters"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 

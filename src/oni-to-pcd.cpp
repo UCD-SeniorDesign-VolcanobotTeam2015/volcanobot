@@ -17,17 +17,26 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include <iomanip>
 #include <string>
 #include <cstring>
+#include "../include/mainwindow.h"
+#include <QApplication>
 
 /***************************************************************
 here for execution of code in standalone, will be removed once 
 integrated in project
 ***************************************************************/
-/*
+
 int main (int argc, char* argv[]) {
+QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    return a.exec();
+}
+int driver(int agrc, char* argv[]){
 	/*
 	expect 2 additional arguments, ie. <executable> <oniFile> <pcdWriteDir>
 	*/
-/*
+
 	const int REQ_ARGS = 3;
 	if (argc < REQ_ARGS) {
  		std::cout << "\nNot enough arguments provided.\n";
@@ -48,7 +57,6 @@ int main (int argc, char* argv[]) {
 
 	return EXIT_SUCCESS;
 }
-
 /***************************************************************
 vba::oni2pcd namespace functions
 ***************************************************************/

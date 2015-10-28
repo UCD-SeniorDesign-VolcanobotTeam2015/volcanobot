@@ -9,11 +9,11 @@ include_directories(${PCL_INCLUDE_DIRS} ../include)
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-set (PROJECT_SOURCES main.cpp oni-to-pcd.cpp mainwindow.cpp errorMsgHandler.cpp)
+set (PROJECT_SOURCES oni-to-pcd.cpp mainwindow.cpp errorMsgHandler.cpp)
 set  (project_HEADERS ../include/errorMsgHandler.h ../include/oni-to-pcd.h ../include/mainwindow.h)
 set  (project_FORMS   mainwindow.ui)
 set  (VTK_LIBRARIES   vtkRendering vtkGraphics vtkHybrid QVTK)
-set (PROJECT_EXECS ../src/main.cpp ../src/oni-to-pcd.cpp ../src/errorMsgHandler.cpp ../src/mainwindow.cpp)
+set (PROJECT_EXECS ../src/oni-to-pcd.cpp ../src/errorMsgHandler.cpp ../src/mainwindow.cpp)
 
 QT4_WRAP_CPP (project_HEADERS_MOC   ${project_HEADERS})
 QT4_WRAP_UI  (project_FORMS_HEADERS ${project_FORMS})

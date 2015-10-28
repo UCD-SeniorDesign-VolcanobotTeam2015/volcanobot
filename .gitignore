@@ -2,13 +2,9 @@
 *.swp
 *.o
 *.oni
-<<<<<<< HEAD
 *.pcd
 src/main.cpp
 res/*
 build/*
 ui/*
-=======
-build/*
 res/*
->>>>>>> fa47276f7c7bdc7116cfa0bbbbc97bbc7bf1376f

@@ -17,14 +17,26 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include <iomanip>
 #include <string>
 #include <cstring>
-#include "../include/mainwindow.h"
-#include <QApplication>
+
+namespace vba {
+	namespace oni2pcd {
+		int totalFrames = 0;
+		int framesToRead = 0,
+			currentFrame = 0,
+			currentReadFrame = 0,
+			frameSkip = 0,
+			timeout = 0;
+char* pcdWriteDirPath = NULL;
+	}
+}
+//#include "../include/mainwindow.h"
+//#include <QApplication>
 
 /***************************************************************
 here for execution of code in standalone, will be removed once 
 integrated in project
 ***************************************************************/
-
+/*
 int main (int argc, char* argv[]) {
 QApplication a(argc, argv);
     MainWindow w;
@@ -32,7 +44,9 @@ QApplication a(argc, argv);
 
     return a.exec();
 }
-int driver(int agrc, char* argv[]){
+*/
+
+int vba::oni2pcd::driver(int argc, char* argv[]){
 	/*
 	expect 2 additional arguments, ie. <executable> <oniFile> <pcdWriteDir>
 	*/
@@ -57,6 +71,7 @@ int driver(int agrc, char* argv[]){
 
 	return EXIT_SUCCESS;
 }
+
 /***************************************************************
 vba::oni2pcd namespace functions
 ***************************************************************/
@@ -179,4 +194,5 @@ void vba::oni2pcd::writeCloudCb (const CloudConstPtr& cloud) {
 
 	++vba::oni2pcd::currentFrame;
 }
+
 

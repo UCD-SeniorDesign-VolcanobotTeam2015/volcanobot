@@ -1,5 +1,6 @@
 #include "../include/mainwindow.h"
 #include "../build/ui_mainwindow.h"
+#include "../include/oni-to-pcd.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -37,6 +38,9 @@ void MainWindow::on_Cancel_clicked()
 
 void MainWindow::on_Start_clicked()
 {
+int argc = 0; 
+char** argv;
+vba::oni2pcd::driver(argc, argv);
 
 }
 

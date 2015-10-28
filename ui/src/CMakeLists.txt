@@ -9,8 +9,8 @@ include_directories (${PCL_INCLUDE_DIRS})
 link_directories    (${PCL_LIBRARY_DIRS})
 add_definitions     (${PCL_DEFINITIONS})
 
-set  (project_SOURCES main.cpp mainwindow.cpp)
-set  (project_HEADERS mainwindow.h)
+set  (project_SOURCES main.cpp mainwindow.cpp temp.cpp)
+set  (project_HEADERS ../include/mainwindow.h ../include/temp.h)
 set  (project_FORMS   mainwindow.ui)
 set  (VTK_LIBRARIES   vtkRendering vtkGraphics vtkHybrid QVTK)
 

@@ -1,9 +1,12 @@
 file(REMOVE_RECURSE
   "ui_mainwindow.h"
-  "moc_mainwindow.cxx"
+  "__/include/moc_mainwindow.cxx"
+  "__/include/moc_temp.cxx"
   "CMakeFiles/ui.dir/main.cpp.o"
   "CMakeFiles/ui.dir/mainwindow.cpp.o"
-  "CMakeFiles/ui.dir/moc_mainwindow.cxx.o"
+  "CMakeFiles/ui.dir/temp.cpp.o"
+  "CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o"
+  "CMakeFiles/ui.dir/__/include/moc_temp.cxx.o"
   "ui.pdb"
   "ui"
 )

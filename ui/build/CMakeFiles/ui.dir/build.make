@@ -61,14 +61,19 @@ ui_mainwindow.h: /home/paul/Documents/volcanobot/ui/src/mainwindow.ui
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating ui_mainwindow.h"
 	/usr/lib/x86_64-linux-gnu/qt4/bin/uic -o /home/paul/Documents/volcanobot/ui/build/ui_mainwindow.h /home/paul/Documents/volcanobot/ui/src/mainwindow.ui
 
-moc_mainwindow.cxx: /home/paul/Documents/volcanobot/ui/src/mainwindow.h
-moc_mainwindow.cxx: moc_mainwindow.cxx_parameters
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating moc_mainwindow.cxx"
-	/usr/lib/x86_64-linux-gnu/qt4/bin/moc @/home/paul/Documents/volcanobot/ui/build/moc_mainwindow.cxx_parameters
+__/include/moc_mainwindow.cxx: /home/paul/Documents/volcanobot/ui/include/mainwindow.h
+__/include/moc_mainwindow.cxx: __/include/moc_mainwindow.cxx_parameters
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating __/include/moc_mainwindow.cxx"
+	cd /home/paul/Documents/volcanobot/ui/build/__/include && /usr/lib/x86_64-linux-gnu/qt4/bin/moc @/home/paul/Documents/volcanobot/ui/build/__/include/moc_mainwindow.cxx_parameters
+
+__/include/moc_temp.cxx: /home/paul/Documents/volcanobot/ui/include/temp.h
+__/include/moc_temp.cxx: __/include/moc_temp.cxx_parameters
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating __/include/moc_temp.cxx"
+	cd /home/paul/Documents/volcanobot/ui/build/__/include && /usr/lib/x86_64-linux-gnu/qt4/bin/moc @/home/paul/Documents/volcanobot/ui/build/__/include/moc_temp.cxx_parameters
 
 CMakeFiles/ui.dir/main.cpp.o: CMakeFiles/ui.dir/flags.make
 CMakeFiles/ui.dir/main.cpp.o: /home/paul/Documents/volcanobot/ui/src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ui.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ui.dir/main.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ui.dir/main.cpp.o -c /home/paul/Documents/volcanobot/ui/src/main.cpp
 
 CMakeFiles/ui.dir/main.cpp.i: cmake_force
@@ -92,7 +97,7 @@ CMakeFiles/ui.dir/main.cpp.o.provides.build: CMakeFiles/ui.dir/main.cpp.o
 
 CMakeFiles/ui.dir/mainwindow.cpp.o: CMakeFiles/ui.dir/flags.make
 CMakeFiles/ui.dir/mainwindow.cpp.o: /home/paul/Documents/volcanobot/ui/src/mainwindow.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ui.dir/mainwindow.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ui.dir/mainwindow.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ui.dir/mainwindow.cpp.o -c /home/paul/Documents/volcanobot/ui/src/mainwindow.cpp
 
 CMakeFiles/ui.dir/mainwindow.cpp.i: cmake_force
@@ -114,42 +119,94 @@ CMakeFiles/ui.dir/mainwindow.cpp.o.provides: CMakeFiles/ui.dir/mainwindow.cpp.o.
 CMakeFiles/ui.dir/mainwindow.cpp.o.provides.build: CMakeFiles/ui.dir/mainwindow.cpp.o
 
 
-CMakeFiles/ui.dir/moc_mainwindow.cxx.o: CMakeFiles/ui.dir/flags.make
-CMakeFiles/ui.dir/moc_mainwindow.cxx.o: moc_mainwindow.cxx
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ui.dir/moc_mainwindow.cxx.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ui.dir/moc_mainwindow.cxx.o -c /home/paul/Documents/volcanobot/ui/build/moc_mainwindow.cxx
+CMakeFiles/ui.dir/temp.cpp.o: CMakeFiles/ui.dir/flags.make
+CMakeFiles/ui.dir/temp.cpp.o: /home/paul/Documents/volcanobot/ui/src/temp.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/ui.dir/temp.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ui.dir/temp.cpp.o -c /home/paul/Documents/volcanobot/ui/src/temp.cpp
 
-CMakeFiles/ui.dir/moc_mainwindow.cxx.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ui.dir/moc_mainwindow.cxx.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/paul/Documents/volcanobot/ui/build/moc_mainwindow.cxx > CMakeFiles/ui.dir/moc_mainwindow.cxx.i
+CMakeFiles/ui.dir/temp.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ui.dir/temp.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/paul/Documents/volcanobot/ui/src/temp.cpp > CMakeFiles/ui.dir/temp.cpp.i
 
-CMakeFiles/ui.dir/moc_mainwindow.cxx.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ui.dir/moc_mainwindow.cxx.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/paul/Documents/volcanobot/ui/build/moc_mainwindow.cxx -o CMakeFiles/ui.dir/moc_mainwindow.cxx.s
+CMakeFiles/ui.dir/temp.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ui.dir/temp.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/paul/Documents/volcanobot/ui/src/temp.cpp -o CMakeFiles/ui.dir/temp.cpp.s
 
-CMakeFiles/ui.dir/moc_mainwindow.cxx.o.requires:
+CMakeFiles/ui.dir/temp.cpp.o.requires:
 
-.PHONY : CMakeFiles/ui.dir/moc_mainwindow.cxx.o.requires
+.PHONY : CMakeFiles/ui.dir/temp.cpp.o.requires
 
-CMakeFiles/ui.dir/moc_mainwindow.cxx.o.provides: CMakeFiles/ui.dir/moc_mainwindow.cxx.o.requires
-	$(MAKE) -f CMakeFiles/ui.dir/build.make CMakeFiles/ui.dir/moc_mainwindow.cxx.o.provides.build
-.PHONY : CMakeFiles/ui.dir/moc_mainwindow.cxx.o.provides
+CMakeFiles/ui.dir/temp.cpp.o.provides: CMakeFiles/ui.dir/temp.cpp.o.requires
+	$(MAKE) -f CMakeFiles/ui.dir/build.make CMakeFiles/ui.dir/temp.cpp.o.provides.build
+.PHONY : CMakeFiles/ui.dir/temp.cpp.o.provides
 
-CMakeFiles/ui.dir/moc_mainwindow.cxx.o.provides.build: CMakeFiles/ui.dir/moc_mainwindow.cxx.o
+CMakeFiles/ui.dir/temp.cpp.o.provides.build: CMakeFiles/ui.dir/temp.cpp.o
+
+
+CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o: CMakeFiles/ui.dir/flags.make
+CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o: __/include/moc_mainwindow.cxx
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o -c /home/paul/Documents/volcanobot/ui/build/__/include/moc_mainwindow.cxx
+
+CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/paul/Documents/volcanobot/ui/build/__/include/moc_mainwindow.cxx > CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.i
+
+CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/paul/Documents/volcanobot/ui/build/__/include/moc_mainwindow.cxx -o CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.s
+
+CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.requires:
+
+.PHONY : CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.requires
+
+CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.provides: CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.requires
+	$(MAKE) -f CMakeFiles/ui.dir/build.make CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.provides.build
+.PHONY : CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.provides
+
+CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.provides.build: CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o
+
+
+CMakeFiles/ui.dir/__/include/moc_temp.cxx.o: CMakeFiles/ui.dir/flags.make
+CMakeFiles/ui.dir/__/include/moc_temp.cxx.o: __/include/moc_temp.cxx
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/ui.dir/__/include/moc_temp.cxx.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ui.dir/__/include/moc_temp.cxx.o -c /home/paul/Documents/volcanobot/ui/build/__/include/moc_temp.cxx
+
+CMakeFiles/ui.dir/__/include/moc_temp.cxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ui.dir/__/include/moc_temp.cxx.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/paul/Documents/volcanobot/ui/build/__/include/moc_temp.cxx > CMakeFiles/ui.dir/__/include/moc_temp.cxx.i
+
+CMakeFiles/ui.dir/__/include/moc_temp.cxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ui.dir/__/include/moc_temp.cxx.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/paul/Documents/volcanobot/ui/build/__/include/moc_temp.cxx -o CMakeFiles/ui.dir/__/include/moc_temp.cxx.s
+
+CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.requires:
+
+.PHONY : CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.requires
+
+CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.provides: CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.requires
+	$(MAKE) -f CMakeFiles/ui.dir/build.make CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.provides.build
+.PHONY : CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.provides
+
+CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.provides.build: CMakeFiles/ui.dir/__/include/moc_temp.cxx.o
 
 
 # Object files for target ui
 ui_OBJECTS = \
 "CMakeFiles/ui.dir/main.cpp.o" \
 "CMakeFiles/ui.dir/mainwindow.cpp.o" \
-"CMakeFiles/ui.dir/moc_mainwindow.cxx.o"
+"CMakeFiles/ui.dir/temp.cpp.o" \
+"CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o" \
+"CMakeFiles/ui.dir/__/include/moc_temp.cxx.o"
 
 # External object files for target ui
 ui_EXTERNAL_OBJECTS =
 
 ui: CMakeFiles/ui.dir/main.cpp.o
 ui: CMakeFiles/ui.dir/mainwindow.cpp.o
-ui: CMakeFiles/ui.dir/moc_mainwindow.cxx.o
+ui: CMakeFiles/ui.dir/temp.cpp.o
+ui: CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o
+ui: CMakeFiles/ui.dir/__/include/moc_temp.cxx.o
 ui: CMakeFiles/ui.dir/build.make
 ui: /usr/lib/x86_64-linux-gnu/libQtGui.so
 ui: /usr/lib/x86_64-linux-gnu/libQtCore.so
@@ -230,7 +287,7 @@ ui: /usr/lib/libvtkCommon.so.5.8.0
 ui: /usr/lib/libvtksys.so.5.8.0
 ui: /usr/lib/libvtkQtChart.so.5.8.0
 ui: CMakeFiles/ui.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable ui"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/paul/Documents/volcanobot/ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable ui"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ui.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -240,7 +297,9 @@ CMakeFiles/ui.dir/build: ui
 
 CMakeFiles/ui.dir/requires: CMakeFiles/ui.dir/main.cpp.o.requires
 CMakeFiles/ui.dir/requires: CMakeFiles/ui.dir/mainwindow.cpp.o.requires
-CMakeFiles/ui.dir/requires: CMakeFiles/ui.dir/moc_mainwindow.cxx.o.requires
+CMakeFiles/ui.dir/requires: CMakeFiles/ui.dir/temp.cpp.o.requires
+CMakeFiles/ui.dir/requires: CMakeFiles/ui.dir/__/include/moc_mainwindow.cxx.o.requires
+CMakeFiles/ui.dir/requires: CMakeFiles/ui.dir/__/include/moc_temp.cxx.o.requires
 
 .PHONY : CMakeFiles/ui.dir/requires
 
@@ -249,7 +308,8 @@ CMakeFiles/ui.dir/clean:
 .PHONY : CMakeFiles/ui.dir/clean
 
 CMakeFiles/ui.dir/depend: ui_mainwindow.h
-CMakeFiles/ui.dir/depend: moc_mainwindow.cxx
+CMakeFiles/ui.dir/depend: __/include/moc_mainwindow.cxx
+CMakeFiles/ui.dir/depend: __/include/moc_temp.cxx
 	cd /home/paul/Documents/volcanobot/ui/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/paul/Documents/volcanobot/ui/src /home/paul/Documents/volcanobot/ui/src /home/paul/Documents/volcanobot/ui/build /home/paul/Documents/volcanobot/ui/build /home/paul/Documents/volcanobot/ui/build/CMakeFiles/ui.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/ui.dir/depend
 

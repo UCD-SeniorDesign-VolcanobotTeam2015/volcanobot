@@ -6,9 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/paul/Documents/volcanobot/ui/build/moc_mainwindow.cxx
-../src/mainwindow.h
-/home/paul/Documents/volcanobot/ui/src/mainwindow.h
+/home/paul/Documents/volcanobot/ui/build/__/include/moc_mainwindow.cxx
+../../../include/mainwindow.h
+/home/paul/Documents/volcanobot/ui/include/mainwindow.h
+
+/home/paul/Documents/volcanobot/ui/build/__/include/moc_temp.cxx
 
 /home/paul/Documents/volcanobot/ui/build/ui_mainwindow.h
 QtCore/QVariant
@@ -44,19 +46,7 @@ QtGui/QToolBar
 QtGui/QWidget
 -
 
-/home/paul/Documents/volcanobot/ui/src/main.cpp
-mainwindow.h
-/home/paul/Documents/volcanobot/ui/src/mainwindow.h
-QApplication
--
-
-/home/paul/Documents/volcanobot/ui/src/mainwindow.cpp
-mainwindow.h
-/home/paul/Documents/volcanobot/ui/src/mainwindow.h
-../build/ui_mainwindow.h
-/home/paul/Documents/volcanobot/ui/build/ui_mainwindow.h
-
-/home/paul/Documents/volcanobot/ui/src/mainwindow.h
+/home/paul/Documents/volcanobot/ui/include/mainwindow.h
 QMainWindow
 -
 QMessageBox
@@ -64,6 +54,28 @@ QMessageBox
 QFileDialog
 -
 string
+-
+
+/home/paul/Documents/volcanobot/ui/include/temp.h
+
+/home/paul/Documents/volcanobot/ui/src/main.cpp
+../include/mainwindow.h
+/home/paul/Documents/volcanobot/ui/include/mainwindow.h
+QApplication
+-
+../include/temp.h
+/home/paul/Documents/volcanobot/ui/include/temp.h
+
+/home/paul/Documents/volcanobot/ui/src/mainwindow.cpp
+../include/mainwindow.h
+/home/paul/Documents/volcanobot/ui/include/mainwindow.h
+../build/ui_mainwindow.h
+/home/paul/Documents/volcanobot/ui/build/ui_mainwindow.h
+
+/home/paul/Documents/volcanobot/ui/src/temp.cpp
+../include/temp.h
+/home/paul/Documents/volcanobot/ui/include/temp.h
+iostream
 -
 
 /usr/include/qt4/Qt3Support/q3cstring.h

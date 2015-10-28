@@ -126,7 +126,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/3.4.0-rc2/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.4.0-rc2/CMakeCCompiler.cmake"
   "CMakeFiles/3.4.0-rc2/CMakeCXXCompiler.cmake"
-  "moc_mainwindow.cxx_parameters"
+  "__/include/moc_mainwindow.cxx_parameters"
+  "__/include/moc_temp.cxx_parameters"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 

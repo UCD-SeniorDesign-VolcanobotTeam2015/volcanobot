@@ -43,10 +43,9 @@ void MainWindow::on_Cancel_clicked()
 void MainWindow::on_Start_clicked()
 {
 /*
-char *argv[2];
-int length = strlen(filePath);
-argv[1] = new char(length +1);
-strncpy(argv[1], filePath, length); 
+ argv[2] contains path to output pcdfiles 
+ dir contains where the pcdfiles will actually be output
+ output contains where the final pointcloud file will be stored off of argv[2]
 */
 
 int argc = 3; 
@@ -57,20 +56,10 @@ argv[1] = new char[length + 1]();
 strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
 
 argv[2] = "/home/paul/Documents/res/pcdFiles";
-std::cout <<argv[1] << "-";
+std::cout <<argv[1] << "-"; // '-' shows ending characters
 std::cout << "\n" << argv[2] << "-";
 vba::oni2pcd::driver(argc, argv);
 
-/* 
-matt's code
-vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
-
-	std::string dir( argv[1] );
-	std::string output( argv[2] );
-	mCloudStitcher->setOutputPath( output );
-	mCloudStitcher->stitchPCDFiles( dir );
-	delete mCloudStitcher;
-*/
 vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
 std::string dir(argv[2]);
 dir = dir + "/pcdTemp";

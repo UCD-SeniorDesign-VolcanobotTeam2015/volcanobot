@@ -5,8 +5,8 @@ File:			oni-to-pcd.cpp
 Description:	Reads an oni file recorded using the Openni2 or Openni library and outputs point clouds (pcd files)
 */
 
-#include "oni-to-pcd.h"
-#include "errorMsgHandler.h"
+#include "../include/oni-to-pcd.h"
+#include "../include/errorMsgHandler.h"
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <iostream>
@@ -18,14 +18,39 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include <string>
 #include <cstring>
 
+namespace vba {
+	namespace oni2pcd {
+		int totalFrames = 0;
+		int framesToRead = 0,
+			currentFrame = 0,
+			currentReadFrame = 0,
+			frameSkip = 0,
+			timeout = 0;
+char* pcdWriteDirPath = NULL;
+	}
+}
+//#include "../include/mainwindow.h"
+//#include <QApplication>
+
 /***************************************************************
 here for execution of code in standalone, will be removed once 
 integrated in project
 ***************************************************************/
+/*
 int main (int argc, char* argv[]) {
+QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    return a.exec();
+}
+*/
+
+int vba::oni2pcd::driver(int argc, char* argv[]){
 	/*
 	expect 2 additional arguments, ie. <executable> <oniFile> <pcdWriteDir>
 	*/
+
 	const int REQ_ARGS = 3;
 	if (argc < REQ_ARGS) {
  		std::cout << "\nNot enough arguments provided.\n";
@@ -50,11 +75,11 @@ int main (int argc, char* argv[]) {
 /***************************************************************
 vba::oni2pcd namespace functions
 ***************************************************************/
-
 /*
 read the given oni file, write the output pcd files to the given directory,
 if no directory is given will write to pcdTemp in the executable directory
 */
+
 void vba::oni2pcd::readOni (const char* oniFile, 
 		char* writeToDirPath,
 		const int framesToSkip) {
@@ -93,7 +118,6 @@ write pcd files to pcdTemp under given directory path if it exists,
 write pcd files to pcdTemp under executable directoy path alternatively
 */
 char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
-
 	if (writeToDir != NULL) {
 		boost::filesystem::path writeToDirPath (writeToDir);
 
@@ -107,9 +131,7 @@ char* vba::oni2pcd::getWriteDirPath (char* writeToDir) {
 			return strcpy (writeToDir, pcdWriteToDirPath.string().c_str());
 		}
 	}
-
 	writeToDir = new char [boost::filesystem::current_path().string().length()];
-
 	boost::filesystem::path pcdWriteToDirPath (boost::filesystem::current_path());
 	pcdWriteToDirPath += "/pcdTemp";
 
@@ -169,3 +191,5 @@ void vba::oni2pcd::writeCloudCb (const CloudConstPtr& cloud) {
 
 	++vba::oni2pcd::currentFrame;
 }
+
+

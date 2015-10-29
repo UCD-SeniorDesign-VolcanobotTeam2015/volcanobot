@@ -1,1 +1,0 @@
-/home/matt/Documents/volcanobot/build/CMakeFiles/Cloud_Stitcher.dir

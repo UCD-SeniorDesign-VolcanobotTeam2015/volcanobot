@@ -5,12 +5,13 @@ File:			oni-to-pcd.h
 Description:	Reads an oni file recorded using the Openni2 library and outputs point clouds (pcd files)
 */
 
-#ifndef _ONI_TO_PCD
-#define _ONI_TO_PCD
-
 #include <pcl/io/openni2_grabber.h>
 #include <pcl/point_cloud.h>
 #include <vector>
+
+#ifndef _ONI_TO_PCD
+#define _ONI_TO_PCD
+
 
 typedef pcl::PointCloud<pcl::PointXYZRGBA> Cloud;
 typedef Cloud::ConstPtr CloudConstPtr;
@@ -19,14 +20,7 @@ namespace vba {
 	namespace oni2pcd {
 		const int DEFAULT_FRAME_SKIP = 25;
 
-		int totalFrames = 0,
-			framesToRead = 0,
-			currentFrame = 0,
-			currentReadFrame = 0,
-			frameSkip = 0,
-			timeout = 0;
-
-		char* pcdWriteDirPath = NULL;
+		
 
 		/*
 		read single oni and write pcds
@@ -59,6 +53,7 @@ namespace vba {
 		callback for our readOniFile, actually writes the pointcloud
 		*/
 		void writeCloudCb (const CloudConstPtr& cloud);	
+	int driver(int argc, char* argv[]);
 	};
 };
 

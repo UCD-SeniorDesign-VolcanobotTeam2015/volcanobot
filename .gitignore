@@ -5,6 +5,3 @@
 *.pcd
 src/main.cpp
 res/*
-build/*
-ui/*
-res/*

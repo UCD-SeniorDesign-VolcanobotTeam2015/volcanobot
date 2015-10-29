@@ -2,6 +2,5 @@
 *.swp
 *.o
 *.oni
-*.pcd
-src/main.cpp
+build/*
 res/*

@@ -306,7 +306,7 @@ namespace vba
 
 		//This is where we hit the recursive part. We now call this function again to start combining the newly stitched pcd files
 		//contained in the newly created temporary directory
-		this->stitchPCDFiles( this->temp_directories->back() );
+		//this->stitchPCDFiles( this->temp_directories->back() );
 
 		//If we have reached this section code, then we have hit the base case and are starting to unwind the stack. All we have to
 		//do is delete all of those temporary directories we created.

@@ -143,6 +143,18 @@ namespace vba
 			void setupWorkerThreads( unsigned int thread_count , unsigned int num_files , std::string output_dir );
 
 
+
+			/*This is a function that is called in the destructor to delete all those temp files and temp directories we created while
+			 * processing the pcd files. This function should also be called after we encounter any error that causes the operations to
+			 * stop.
+			 *
+			 * @param: none
+			 * @return: 0 upon success
+			 * 			-1 if an error occurred while deleting temp files and directories
+			 */
+			int cleanupTempDirectories();
+
+
 			//This is a class that wraps all the operations associated with one thread. Since there can be multiple
 			//instances of this class that are all owned by a single CloudStitcher object, we encapsulated the
 			//class definition within CloudStitcher.

@@ -229,14 +229,6 @@ namespace vba
 				this->cleanupTempDirectories();
 				return -1;
 			}
-			/*
-			if( !boost::filesystem::create_directory( temp_dir ))
-			{
-				std::cerr << "Error: Problem creating temporary directory.\n";
-				this->cleanupTempDirectories();
-				return -1;
-			}
-			*/
 		}
 
 		//if this is not the first recursive step then we will name the new temp dir based on how many
@@ -261,14 +253,6 @@ namespace vba
 				this->cleanupTempDirectories();
 				return -1;
 			}
-			/*
-			if( !boost::filesystem::create_directory( temp_dir ))
-			{
-				std::cerr << "Error: Problem creating temporary directory.\n";
-				this->cleanupTempDirectories();
-				return -1;
-			}
-			*/
 
 			//we have to keep track of the paths to all these temp dirs for cleanup later
 			this->temp_directories->push_back( new_temp_dir_name.str() );
@@ -406,13 +390,13 @@ namespace vba
 		}
 
 		//use boost to remove each temporary dir from the filesystem and then delete the entry from temp_directories array
-		std::vector< std::string >::iterator itr;
-		for( itr = this->temp_directories->begin() ; itr != this->temp_directories->end() ; ++itr )
+		std::vector< std::string >::reverse_iterator itr;
+		for( itr = this->temp_directories->rbegin() ; itr != this->temp_directories->rend() ; ++itr )
 		{
 			try
 			{
 				boost::filesystem::remove_all( *itr );
-				this->temp_directories->erase( itr );
+				this->temp_directories->erase( --(itr.base()) );
 			}
 			catch( boost::filesystem::filesystem_error const &e )
 			{

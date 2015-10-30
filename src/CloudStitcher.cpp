@@ -90,6 +90,7 @@ namespace vba
 		{
 			//return if the directory path cannot be found
 			std::cerr << "Error: Given directory: " << directory_path << " does not exits.\n";
+			this->cleanupTempDirectories();
 			return -1;
 		}
 
@@ -197,6 +198,7 @@ namespace vba
 			catch( boost::filesystem::filesystem_error const &e )
 			{
 				std::cerr << "Error: Problem moving final pcd file to output directory. Boost filesystem threw error: " << e.what() << "\n";
+				this->cleanupTempDirectories();
 				return -1;
 			}
 
@@ -216,9 +218,15 @@ namespace vba
 			temp_dir_name += "temp_dir1/";
 			this->temp_directories->push_back( temp_dir_name );
 			boost::filesystem::path temp_dir( temp_dir_name );
-			if( !boost::filesystem::create_directory( temp_dir ))
+
+			try
 			{
-				std::cerr << "Error: Problem creating temporary directory.\n";
+				boost::filesystem::create_directory( temp_dir );
+			}
+			catch( boost::filesystem::filesystem_error const &e )
+			{
+				std::cerr << "Error: Problem creating temporary directory. Boost error: " << e.what() << "\n";
+				this->cleanupTempDirectories();
 				return -1;
 			}
 		}
@@ -234,9 +242,15 @@ namespace vba
 			new_temp_dir_name << "/";
 
 			boost::filesystem::path temp_dir( new_temp_dir_name.str() );
-			if( !boost::filesystem::create_directory( temp_dir ))
+
+			try
 			{
-				std::cerr << "Error: Problem creating temporary directory.\n";
+				boost::filesystem::create_directory( temp_dir );
+			}
+			catch( boost::filesystem::filesystem_error const &e )
+			{
+				std::cerr << "Error: Problem creating temporary directory. Boost error: " << e.what() << "\n";
+				this->cleanupTempDirectories();
 				return -1;
 			}
 
@@ -306,22 +320,14 @@ namespace vba
 
 		//This is where we hit the recursive part. We now call this function again to start combining the newly stitched pcd files
 		//contained in the newly created temporary directory
-		this->stitchPCDFiles( this->temp_directories->back() );
+		int return_code = this->stitchPCDFiles( this->temp_directories->back() );
 
 		//If we have reached this section code, then we have hit the base case and are starting to unwind the stack. All we have to
 		//do is delete all of those temporary directories we created.
-		try
-		{
-			boost::filesystem::remove_all( this->temp_directories->back() );
-			this->temp_directories->erase( this->temp_directories->end() );
-		}
-		catch( boost::filesystem::filesystem_error const &e )
-		{
-			std::cerr << "Error: Failed to delete a temporary directory\n";
-		}
+		this->cleanupTempDirectories();
 
 
-		return 0;
+		return return_code;
 	}
 
 	void CloudStitcher::enableMultithreading( const bool choice )
@@ -370,6 +376,39 @@ namespace vba
 			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir ));
 
 		}
+	}
+
+
+	int CloudStitcher::cleanupTempDirectories()
+	{
+		bool result = true;
+
+		//if there are no temporary directories in the array then we don't need to delete anything
+		if( this->temp_directories->size() == 0 )
+		{
+			return 0;
+		}
+
+		//use boost to remove each temporary dir from the filesystem and then delete the entry from temp_directories array
+		std::vector< std::string >::reverse_iterator itr;
+		for( itr = this->temp_directories->rbegin() ; itr != this->temp_directories->rend() ; ++itr )
+		{
+			try
+			{
+				boost::filesystem::remove_all( *itr );
+				this->temp_directories->erase( --(itr.base()) );
+			}
+			catch( boost::filesystem::filesystem_error const &e )
+			{
+				std::cerr << "Error: Failed to delete a temporary directory\n";
+				result = false;
+			}
+		}
+
+		if( result == true )
+			return 0;
+		else
+			return -1;
 	}
 
 

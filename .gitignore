@@ -3,5 +3,4 @@
 *.o
 *.oni
 *.pcd
-src/main.cpp
 res/*

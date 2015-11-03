@@ -40,6 +40,10 @@
 namespace vba
 {
 
+	//Just typedeffing the signature of a function pointer we can accept from the user for output redirection
+	typedef void (*outputFunction ) (std::string output , bool is_error );
+
+
 	typedef pcl::PointXYZ PointT;
 	typedef pcl::PointCloud<PointT> PointCloud;
 	typedef pcl::PointNormal PointNormalT;
@@ -86,15 +90,38 @@ namespace vba
 
 			int start();
 
+			/*Public facing function that accepts a function pointer. This function pointer will be passed all
+			 * the output from this function. If no function pointer is ever given, we will just default to sending
+			 * all the output to standard out and standard error.
+			 *
+			 * @param: Function pointer following the signature   void functionName( std::string )
+			 *
+			 */
+			void setOutputFunction( outputFunction function_pointer );
+
 		private:
 
 			int loadPCDData( PCD* target  );
 			void pairAlign(const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt, PointCloud::Ptr output, Eigen::Matrix4f &final_transform, bool downsample );
 
+
+			/*This a function used only in this component. It is called whenever we want to create output messages or
+			 * error messages. If the user provided an output function we will use that. Otherwise we just print to
+			 * standard output or standard error.
+			 *
+			 * @param: The string containing the message to be outputted.
+			 * @param: True if the message is an error, false otherwise.
+			 *
+			 */
+			void sendOutput( std::string output , bool is_error );
+
+
 			std::vector< std::string >* file_list;
 			std::string output_filename;
 
-			std::vector<PCD, Eigen::aligned_allocator<PCD> >* point_cloud_models;
+			outputFunction user_output_function;
+			bool redirect_output_flag;
+
 	};
 
 }

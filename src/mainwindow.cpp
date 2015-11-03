@@ -71,7 +71,18 @@ std::string dir(argv[2]);
 dir = dir + "/pcdTemp";
 std::string output(resFolder + "/finalPointCloud");
 mCloudStitcher->setOutputPath( output );
+
+//make a function pointer out of your custom function that follows the signature that I declared in my component.
+//The function you create just has to follow the lines void myFunctionName( std::string output , bool is_error )
+vba::outputFunction function_pointer = &myOutputFunction;
+
+//this is my setter that takes the function pointer and uses it for all output. Otherwise it will just print to std::cout
+//and std::cerr by default
+mCloudStitcher->setOutputFunction( function_pointer );
+
+
 mCloudStitcher->stitchPCDFiles( dir );
+std::cout << "made if back here\n";
 delete mCloudStitcher;
 }
 
@@ -85,12 +96,16 @@ void MainWindow::on_radioButton_toggled(bool checked)
     appendMessage(msg);
     ui->plainTextEdit->setVisible(checked);
 
+void MainWindow::myOutputFunction( std::string output , bool is_error )
+{
+	if( is_error == true )
+		std::cerr << output;
+
+	else
+		std::cout << output;
 }
-
-
 // ** Helper Functions ** //
 void MainWindow::appendMessage(QString msg) {
     ui->plainTextEdit->appendPlainText(msg);
 
 }
-

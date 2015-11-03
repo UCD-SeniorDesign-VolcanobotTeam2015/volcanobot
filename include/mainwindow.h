@@ -35,6 +35,7 @@ private:
     QString oniFileName;
     QString toDisplay;
     int counter;
+static void myOutputFunction( std::string output , bool is_error );
 };
 
 #endif // MAINWINDOW_H

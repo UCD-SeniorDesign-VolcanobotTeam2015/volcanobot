@@ -47,6 +47,9 @@ namespace vba
 		THREAD_16
 	};
 
+	//Just typedeffing the signature of a function pointer we can accept from the user for output redirection
+	typedef void (*outputFunction ) (std::string output , bool is_error );
+
 
 	class CloudStitcher
 	{
@@ -93,6 +96,17 @@ namespace vba
 
 
 
+			/*Public facing function that accepts a function pointer. This function pointer will be passed all
+			 * the output from this function. If no function pointer is ever given, we will just default to sending
+			 * all the output to standard out and standard error.
+			 *
+			 * @param: Function pointer following the signature   void functionName( std::string )
+			 *
+			 */
+			void setOutputFunction( outputFunction function_pointer );
+
+
+
 			//methods to toggle configuration settings
 
 			/*Public facing function that allows the user to toggle the utilization of concurrency while
@@ -128,6 +142,9 @@ namespace vba
 			std::vector<std::string>* pcd_filenames;
 			std::vector<std::string>* temp_directories;
 
+			outputFunction user_output_function;
+			bool redirect_output_flag;
+
 
 			//configurations
 			bool multithreading_enabled;
@@ -155,6 +172,17 @@ namespace vba
 			int cleanupTempDirectories();
 
 
+			/*This a function used only in this component. It is called whenever we want to create output messages or
+			 * error messages. If the user provided an output function we will use that. Otherwise we just print to
+			 * standard output or standard error.
+			 *
+			 * @param: The string containing the message to be outputted.
+			 * @param: True if the message is an error, false otherwise.
+			 *
+			 */
+			void sendOutput( std::string output , bool is_error );
+
+
 			//This is a class that wraps all the operations associated with one thread. Since there can be multiple
 			//instances of this class that are all owned by a single CloudStitcher object, we encapsulated the
 			//class definition within CloudStitcher.
@@ -167,7 +195,7 @@ namespace vba
 					 * @param: a copy of the vector containing the pcd files to stich together
 					 * @return: none
 					 */
-					CloudStitchingThread( const std::vector< std::string >& files , std::string output_dir );
+					CloudStitchingThread( const std::vector< std::string >& files , std::string output_dir , outputFunction function_pointer );
 
 					/*Default destructor that deallocates the objects allocated dynamically throughout this instances
 					 * lifespan

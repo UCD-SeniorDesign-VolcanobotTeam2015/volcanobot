@@ -51,11 +51,11 @@ void MainWindow::on_Start_clicked()
 int argc = 3; 
 char* argv[3];
 int length = strlen(oniFileName.toStdString().c_str());
-std::string resFolder = "/home/paul/Documents/res";
+std::string resFolder = "/home/matt/Documents/volcanobot/res";
 argv[1] = new char[length + 1]();
 strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
 
-argv[2] = "/home/paul/Documents/res/pcdFiles";
+argv[2] = "/home/matt/Documents/volcanobot/res/pcdFiles";
 std::cout <<argv[1] << "-"; // '-' shows ending characters
 std::cout << "\n" << argv[2] << "-";
 vba::oni2pcd::driver(argc, argv);
@@ -65,7 +65,18 @@ std::string dir(argv[2]);
 dir = dir + "/pcdTemp";
 std::string output(resFolder + "/finalPointCloud");
 mCloudStitcher->setOutputPath( output );
+
+//make a function pointer out of your custom function that follows the signature that I declared in my component.
+//The function you create just has to follow the lines void myFunctionName( std::string output , bool is_error )
+vba::outputFunction function_pointer = &myOutputFunction;
+
+//this is my setter that takes the function pointer and uses it for all output. Otherwise it will just print to std::cout
+//and std::cerr by default
+mCloudStitcher->setOutputFunction( function_pointer );
+
+
 mCloudStitcher->stitchPCDFiles( dir );
+std::cout << "made if back here\n";
 delete mCloudStitcher;
 }
 
@@ -74,4 +85,13 @@ void MainWindow::on_radioButton_toggled(bool checked)
 {
     ui->label->setVisible(checked);
     ui->progressBar->setValue(ui->progressBar->value()+1);
+}
+
+void MainWindow::myOutputFunction( std::string output , bool is_error )
+{
+	if( is_error == true )
+		std::cerr << output;
+
+	else
+		std::cout << output;
 }

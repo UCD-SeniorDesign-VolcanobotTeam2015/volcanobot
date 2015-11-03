@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>574</width>
-    <height>410</height>
+    <width>1015</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="palette">
@@ -78,22 +78,6 @@
    <string>PointCloud and Mesh Generator</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>100</y>
-      <width>531</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QRadioButton" name="radioButton">
     <property name="geometry">
      <rect>
@@ -180,12 +164,22 @@
       <string>Browse</string>
      </property>
     </widget>
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>531</width>
+       <height>191</height>
+      </rect>
+     </property>
+    </widget>
     <zorder>Browse</zorder>
     <zorder>Start</zorder>
     <zorder>Cancel</zorder>
+    <zorder>plainTextEdit</zorder>
    </widget>
    <zorder>frame</zorder>
-   <zorder>label</zorder>
    <zorder>radioButton</zorder>
    <zorder>progressBar</zorder>
   </widget>
@@ -194,7 +188,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>574</width>
+     <width>1015</width>
      <height>25</height>
     </rect>
    </property>

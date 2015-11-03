@@ -9,8 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->label->setStyleSheet("QLabel {background-color : white; }");
+//    ui->plainTextEdit->setStyleSheet("QLabel {background-color : white; }");
     ui->progressBar->setValue(0);
+    counter = 0;
+    ui->plainTextEdit->setReadOnly(true);
 }
 
 MainWindow::~MainWindow()
@@ -27,11 +29,11 @@ void MainWindow::on_Browse_clicked()
                             "Text files (*.oni)");
     if(files.size() > 0) {
 	oniFileName = files[0];
-        ui->label->setText(oniFileName + " selected");
+        appendMessage(QString(oniFileName + " selected"));
 	}
     else {
-        ui->label->setText("No .ONI file selected");
-        ui->label->setAlignment(Qt::AlignTop);
+        appendMessage("No .ONI file selected");
+//        ui->plainTextEdit->setAlignment(Qt::AlignTop);
     }
 }
 
@@ -48,6 +50,10 @@ void MainWindow::on_Start_clicked()
  output contains where the final pointcloud file will be stored off of argv[2]
 */
 
+    if(oniFileName == "") {
+        appendMessage("ERROR: Please browse for an .ONI file before clicking start");
+        return;
+    }
 int argc = 3; 
 char* argv[3];
 int length = strlen(oniFileName.toStdString().c_str());
@@ -72,6 +78,19 @@ delete mCloudStitcher;
 
 void MainWindow::on_radioButton_toggled(bool checked)
 {
-    ui->label->setVisible(checked);
     ui->progressBar->setValue(ui->progressBar->value()+1);
+    toDisplay = "index: " + QString::number(++counter) + "\n" + toDisplay;
+    // ui->label->setText(toDisplay);
+    QString msg = "This is the message" + QString::number(++counter);
+    appendMessage(msg);
+    ui->plainTextEdit->setVisible(checked);
+
 }
+
+
+// ** Helper Functions ** //
+void MainWindow::appendMessage(QString msg) {
+    ui->plainTextEdit->appendPlainText(msg);
+
+}
+

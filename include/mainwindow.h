@@ -19,6 +19,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private:
+    void appendMessage(QString msg);
+
 private slots:
     void on_Browse_clicked();
     void on_Cancel_clicked();
@@ -30,6 +33,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QString oniFileName;
+    QString toDisplay;
+    int counter;
 };
 
 #endif // MAINWINDOW_H

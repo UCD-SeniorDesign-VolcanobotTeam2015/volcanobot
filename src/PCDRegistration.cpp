@@ -9,7 +9,7 @@ namespace vba
 	{
 		this->file_list = new std::vector< std::string >( files );
 		this->output_filename = output_file;
-		this->point_cloud_models = new std::vector<PCD, Eigen::aligned_allocator<PCD> >();
+		this->redirect_output_flag = false;
 	}
 
 	PCDRegistration::~PCDRegistration()
@@ -19,7 +19,9 @@ namespace vba
 
 	int PCDRegistration::start()
 	{
-		std::cout << "processing " << this->file_list->size() << " frames.\n";
+		std::stringstream output;
+		output << "processing " << this->file_list->size() << " frames.\n";
+		this->sendOutput( output.str() , false );
 
 		PCD first;
 		Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity (), pairTransform;
@@ -193,5 +195,33 @@ namespace vba
 		  *output += *cloud_src;
 
 		  final_transform = targetToSource;
+	}
+
+
+	void PCDRegistration::setOutputFunction( outputFunction function_pointer )
+	{
+		this->user_output_function = function_pointer;
+		this->redirect_output_flag = true;
+	}
+
+
+	void PCDRegistration::sendOutput( std::string output , bool is_error )
+	{
+		if( this->redirect_output_flag )
+		{
+			this->user_output_function( output , is_error );
+		}
+
+		else
+		{
+			if( is_error == true )
+			{
+				std::cerr << output;
+			}
+			else
+			{
+				std::cout << output;
+			}
+		}
 	}
 }

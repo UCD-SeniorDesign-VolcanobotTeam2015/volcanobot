@@ -19,6 +19,7 @@ namespace vba
 
 		this->num_threads = THREAD_1;
 		this->multithreading_enabled = true;
+		this->redirect_output_flag = false;
 
 	}
 
@@ -31,6 +32,9 @@ namespace vba
 			CloudStitcher::CloudStitchingThread* temp = this->worker_threads->at(i);
 			delete temp;
 		}
+
+		delete temp_directories;
+
 	}
 
 	int CloudStitcher::setPCDDirectory( std::string directory_path )
@@ -42,7 +46,7 @@ namespace vba
 		//check to make sure there actually are characters in the function parameter
 		if( directory_path.size() == 0 )
 		{
-			std::cerr << "Error: Provided empty string as directory.\n";
+			this->sendOutput( "Error: Provided empty string as directory.\n" , false );
 			return -1;
 		}
 
@@ -89,7 +93,9 @@ namespace vba
 		else
 		{
 			//return if the directory path cannot be found
-			std::cerr << "Error: Given directory: " << directory_path << " does not exits.\n";
+			std::stringstream output;
+			output << "Error: Given directory: " << directory_path << "does not exist.\n";
+			this->sendOutput( output.str() , true );
 			this->cleanupTempDirectories();
 			return -1;
 		}
@@ -145,7 +151,9 @@ namespace vba
 		//check to make sure the parent directory actually exists and exit otherwise
 		if( !boost::filesystem::is_directory( parent_path ) )
 		{
-			std::cerr << "Error: specified output directory does not exist: " << parent_path.string() << "\n";
+			std::stringstream output;
+			output << "Error: specified output directory does not exist: " << parent_path.string() << "\n";
+			this->sendOutput( output.str() , true );
 			return -1;
 		}
 
@@ -153,7 +161,7 @@ namespace vba
 		std::string filename = basename.string();
 		if( filename.size() < 2 )
 		{
-			std::cerr << "Error: no filename was specified.\n";
+			this->sendOutput( "Error: no filename was specified.\n" , true );
 			return -1;
 		}
 
@@ -163,13 +171,19 @@ namespace vba
 		return 0;
 	}
 
+	void CloudStitcher::setOutputFunction( outputFunction function_pointer )
+	{
+		this->user_output_function = function_pointer;
+		this->redirect_output_flag = true;
+	}
+
 
 	int CloudStitcher::stitchPCDFiles( const std::string directory_path )
 	{
 		//do some basic error handling first and make sure the user gave us an output path to work with
 		if( this->output_path == "" )
 		{
-			std::cerr << "Error: No output path has been specified yet.\n";
+			this->sendOutput( "Error: No output path has been specified yet.\n" , true );
 			return -1;
 		}
 
@@ -197,12 +211,16 @@ namespace vba
 			}
 			catch( boost::filesystem::filesystem_error const &e )
 			{
-				std::cerr << "Error: Problem moving final pcd file to output directory. Boost filesystem threw error: " << e.what() << "\n";
+				std::stringstream output( "Error: Problem moving final pcd file to output directory. Boost filesystem threw error: " );
+				output << e.what() << "\n";
+				this->sendOutput( output.str() , true );
 				this->cleanupTempDirectories();
 				return -1;
 			}
 
-			std::cout << "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
+			std::stringstream output;
+			output<< "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
+			this->sendOutput( output.str() , false );
 			return 0;
 		}
 
@@ -225,7 +243,9 @@ namespace vba
 			}
 			catch( boost::filesystem::filesystem_error const &e )
 			{
-				std::cerr << "Error: Problem creating temporary directory. Boost error: " << e.what() << "\n";
+				std::stringstream output;
+				output << "Error: Problem creating temporary directory. Boost error: " << e.what() << "\n";
+				this->sendOutput( output.str() , true );
 				this->cleanupTempDirectories();
 				return -1;
 			}
@@ -249,7 +269,9 @@ namespace vba
 			}
 			catch( boost::filesystem::filesystem_error const &e )
 			{
-				std::cerr << "Error: Problem creating temporary directory. Boost error: " << e.what() << "\n";
+				std::stringstream output;
+				output << "Error: Problem creating temporary directory. Boost error: " << e.what() << "\n";
+				this->sendOutput( output.str() , true );
 				this->cleanupTempDirectories();
 				return -1;
 			}
@@ -288,8 +310,15 @@ namespace vba
 			break;
 		}
 
-		std::cout << "Read in " << this->pcd_filenames->size() << " files.\n";
-		std::cout << "Spinning up " << this->worker_threads->size() << " threads.\n\n";
+		//just printing some info to the user
+		std::stringstream output;
+		output << "Read in " << this->pcd_filenames->size() << " files.\n";
+		this->sendOutput( output.str() , false );
+
+		output.str("");
+		output << "Spinning up " << this->worker_threads->size() << " threads.\n\n";
+		this->sendOutput( output.str() , false );
+
 
 		//spin up all the allocated threads
 		for( unsigned int i = 0 ; i < this->worker_threads->size() ; ++i )
@@ -357,7 +386,7 @@ namespace vba
 		if( thread_count == 1 )
 		{
 			std::vector< std::string > param_vec( current_offset , this->pcd_filenames->end() );
-			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir ));
+			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->user_output_function ));
 		}
 
 		//otherwise we are going to divide up the filename array as evenly as possible among all the threads
@@ -367,13 +396,13 @@ namespace vba
 			{
 				std::vector< std::string >::iterator last = ( current_offset + offset );
 				std::vector< std::string > param_vec( current_offset , last );
-				this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir ));
+				this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->user_output_function ));
 				current_offset = last;
 			}
 
 			//to prevent a seg-fault we just copy whatever is left of the filename array into the last thread
 			std::vector< std::string > param_vec( current_offset , this->pcd_filenames->end() );
-			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir ));
+			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->user_output_function ));
 
 		}
 	}
@@ -400,7 +429,7 @@ namespace vba
 			}
 			catch( boost::filesystem::filesystem_error const &e )
 			{
-				std::cerr << "Error: Failed to delete a temporary directory\n";
+				this->sendOutput( "Error: Failed to delete a temporary directory\n" , true );
 				result = false;
 			}
 		}
@@ -414,11 +443,31 @@ namespace vba
 
 
 
+	void CloudStitcher::sendOutput( std::string output , bool is_error )
+	{
+		if( this->redirect_output_flag == true )
+		{
+			this->user_output_function( output , is_error );
+		}
+
+		else
+		{
+			if( is_error == true )
+			{
+				std::cerr << output;
+			}
+			else
+			{
+				std::cout << output;
+			}
+		}
+	}
 
 
 
 
-	CloudStitcher::CloudStitchingThread::CloudStitchingThread( const std::vector< std::string >& files , std::string output_dir )
+
+	CloudStitcher::CloudStitchingThread::CloudStitchingThread( const std::vector< std::string >& files , std::string output_dir , outputFunction function_pointer )
 	{
 		//we will make a copy of the list of target filenames for this instance of the class
 		this->file_list = new std::vector< std::string >( files );
@@ -433,6 +482,7 @@ namespace vba
 		this->output_filename += filename.filename().string();
 
 		this->mPCDRegistration = new PCDRegistration( files , this->output_filename );
+		this->mPCDRegistration->setOutputFunction( function_pointer );
 	}
 
 	CloudStitcher::CloudStitchingThread::~CloudStitchingThread()

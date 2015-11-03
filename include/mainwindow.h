@@ -30,6 +30,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QString oniFileName;
+
+    static void myOutputFunction( std::string output , bool is_error );
 };
 
 #endif // MAINWINDOW_H

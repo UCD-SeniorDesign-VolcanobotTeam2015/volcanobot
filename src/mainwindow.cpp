@@ -4,6 +4,9 @@
 #include <iostream>
 #include "../include/CloudStitcher.h"
 
+
+QPlainTextEdit* MainWindow::pte = new QPlainTextEdit();
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -13,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->progressBar->setValue(0);
     counter = 0;
     ui->plainTextEdit->setReadOnly(true);
+    //pte = new QPlainTextEdit(parent);
+
 }
 
 MainWindow::~MainWindow()
@@ -29,7 +34,7 @@ void MainWindow::on_Browse_clicked()
                             "Text files (*.oni)");
     if(files.size() > 0) {
 	oniFileName = files[0];
-        appendMessage(QString(oniFileName + " selected"));
+        appendMessage(oniFileName.toStdString() + " selected");
 	}
     else {
         appendMessage("No .ONI file selected");
@@ -74,7 +79,7 @@ mCloudStitcher->setOutputPath( output );
 
 //make a function pointer out of your custom function that follows the signature that I declared in my component.
 //The function you create just has to follow the lines void myFunctionName( std::string output , bool is_error )
-vba::outputFunction function_pointer = &myOutputFunction;
+vba::outputFunction function_pointer = &appendMessage;
 
 //this is my setter that takes the function pointer and uses it for all output. Otherwise it will just print to std::cout
 //and std::cerr by default
@@ -93,9 +98,9 @@ void MainWindow::on_radioButton_toggled(bool checked)
     toDisplay = "index: " + QString::number(++counter) + "\n" + toDisplay;
     // ui->label->setText(toDisplay);
     QString msg = "This is the message" + QString::number(++counter);
-    appendMessage(msg);
+    appendMessage(msg.toStdString(), false);
     ui->plainTextEdit->setVisible(checked);
-
+}
 void MainWindow::myOutputFunction( std::string output , bool is_error )
 {
 	if( is_error == true )
@@ -105,7 +110,8 @@ void MainWindow::myOutputFunction( std::string output , bool is_error )
 		std::cout << output;
 }
 // ** Helper Functions ** //
-void MainWindow::appendMessage(QString msg) {
-    ui->plainTextEdit->appendPlainText(msg);
+void MainWindow::appendMessage(const std::string msg,const bool is_error) {
+    QString output = QString::fromStdString(msg);
+//    ui->plainTextEdit->appendPlainText(output);
 
 }

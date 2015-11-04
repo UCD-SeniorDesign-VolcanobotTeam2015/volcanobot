@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <string>
+#include <QPlainTextEdit>
 
 
 namespace Ui {
@@ -20,7 +21,7 @@ public:
     ~MainWindow();
 
 private:
-    void appendMessage(QString msg);
+    static void appendMessage(const std::string msg, const bool is_error = false);
 
 private slots:
     void on_Browse_clicked();
@@ -35,7 +36,8 @@ private:
     QString oniFileName;
     QString toDisplay;
     int counter;
-static void myOutputFunction( std::string output , bool is_error );
+    static QPlainTextEdit* pte;
+    static void myOutputFunction( std::string output , bool is_error );
 };
 
 #endif // MAINWINDOW_H

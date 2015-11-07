@@ -11,11 +11,11 @@ namespace vba
 		this->output_filename = output_file;
 		this->redirect_output_flag = false;
 
-		this->filter_leaf_size_x = 0.025;
-		this->filter_leaf_size_y = 0.025;
-		this->filter_leaf_size_z = 0.025;
+		this->filter_leaf_size_x = 0.05;
+		this->filter_leaf_size_y = 0.05;
+		this->filter_leaf_size_z = 0.05;
 
-		this->lock_x_transformations = true;
+		this->lock_x_transformations = false;
 		this->lock_y_transformations = true;
 		this->lock_z_transformations= false;
 	}
@@ -85,7 +85,9 @@ namespace vba
 
 		}
 
-		pcl::io::savePCDFile( "final_cloud.pcd" , *final , true );
+		std::stringstream filename;
+		filename << this->output_filename << "final_cloud.pcd";
+		pcl::io::savePCDFile( filename.str() , *final , true );
 
 		return 0;
 	}
@@ -114,6 +116,7 @@ namespace vba
 		*src = this->filterCloud( cloud_src );
 		*tgt = this->filterCloud( cloud_tgt );
 
+		/*
 		// ICP object.
 		PointCloud::Ptr finalCloud(new PointCloud);
 		pcl::IterativeClosestPoint<PointT , PointT> registration;
@@ -135,11 +138,7 @@ namespace vba
 		reg_transform = registration.getFinalTransformation();
 		final_transform = Eigen::Matrix4f::Identity();
 		final_transform( 2 , 3 ) = reg_transform( 2 , 3 );
-		//final_transform = reg_transform.inverse();
-		//final_transform( 1 , 3 ) = 0.0;
-		//final_transform( 0 , 3 ) = 0.0;
 
-		std::cout << final_transform << "\n";
 
 		//
 		// Transform target back in source frame
@@ -151,9 +150,9 @@ namespace vba
 		//*output = *src;
 
 
+		*/
 
 
-		  /*
 		  // Compute surface normals and curvature
 		  PointCloudWithNormals::Ptr points_with_normals_src (new PointCloudWithNormals);
 		  PointCloudWithNormals::Ptr points_with_normals_tgt (new PointCloudWithNormals);
@@ -232,7 +231,7 @@ namespace vba
 		  *output += *cloud_src;
 
 		  final_transform = targetToSource;
-		  */
+
 	}
 
 

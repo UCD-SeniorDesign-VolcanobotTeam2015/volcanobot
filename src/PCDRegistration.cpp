@@ -10,6 +10,14 @@ namespace vba
 		this->file_list = new std::vector< std::string >( files );
 		this->output_filename = output_file;
 		this->redirect_output_flag = false;
+
+		this->filter_leaf_size_x = 0.025;
+		this->filter_leaf_size_y = 0.025;
+		this->filter_leaf_size_z = 0.025;
+
+		this->lock_x_transformations = true;
+		this->lock_y_transformations = true;
+		this->lock_z_transformations= false;
 	}
 
 	PCDRegistration::~PCDRegistration()
@@ -23,88 +31,135 @@ namespace vba
 		output << "processing " << this->file_list->size() << " frames.\n";
 		this->sendOutput( output.str() , false );
 
-		PCD first;
-		Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity (), pairTransform;
-		PointCloud::Ptr result ( new PointCloud );
 
-		first.filename = this->file_list->at(0);
+		output.str("");
+		output << "Loaded " << int( this->file_list->size()) << " datasets\n";
+		this->sendOutput( output.str() , false );
 
-		//load in the the first point cloud file
-		this->loadPCDData(  &first );
 
-		std::vector< std::string >::iterator itr;
-		for( itr = this->file_list->begin() + 1 ; itr != this->file_list->end() ; ++itr )
+		PointCloud::Ptr target( new PointCloud() );
+		PointCloud::Ptr result ( new PointCloud() );
+		PointCloud::Ptr source( new PointCloud() );
+		PointCloud::Ptr final( new PointCloud() );
+
+		Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity();
+		Eigen::Matrix4f pairTransform = Eigen::Matrix4f::Identity();
+
+		for (size_t i = 1; i < this->file_list->size (); ++i)
 		{
-			PCD second;
-			second.filename = *itr;
 
-			if( this->loadPCDData( &second ) != 0 )
-			{
-				continue;
-			}
+			pcl::io::loadPCDFile( this->file_list->at( i - 1 ) , *source );
+			pcl::io::loadPCDFile( this->file_list->at( i ) , *target );
+
 
 			PointCloud::Ptr temp (new PointCloud);
-			this->pairAlign (first.cloud , second.cloud , temp , pairTransform, true);
 
+			this->pairAlign (source, target, temp, pairTransform, true);
+
+			if( this->lock_x_transformations == true )
+				pairTransform( 0 , 3 ) = 0.0f;
+			if( this->lock_y_transformations == true )
+				pairTransform( 1 , 3 ) = 0.0f;
+			if( this->lock_z_transformations == true )
+				pairTransform( 2, 3 ) = 0.0f;
 
 			//transform current pair into the global transform
-			pcl::transformPointCloud (*temp , *result , GlobalTransform );
+			pcl::transformPointCloud (*temp, *result, GlobalTransform);
+
+
+			//add cloud to the total model
+			*final += *result;
+			*final = this->filterCloud( final );
+
+			std::cout << "total point count: " << final->size() << "\n";
 
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
+
+
+			std::stringstream ss;
+			ss << "temp_cloud" << i << ".pcd";
+			pcl::io::savePCDFile( ss.str() , *final , true );
+
+			this->sendOutput( "saved new pcd file\n", false );
+
 		}
 
-		pcl::io::savePCDFile ( this->output_filename , *result , true );
+		pcl::io::savePCDFile( "final_cloud.pcd" , *final , true );
 
 		return 0;
 	}
 
-	int PCDRegistration::loadPCDData( PCD* target  )
+	void PCDRegistration::setFilterLeafSize( float x , float y , float z )
 	{
-
-		if( pcl::io::loadPCDFile( target->filename , *target->cloud ) == 0 )
+		if( x < 0 || y < 0 || z < 0 )
 		{
-			std::vector<int> indices;
-			pcl::removeNaNFromPointCloud( *target->cloud , *target->cloud , indices );
-			return 0;
-		}
-		else
-		{
-			return -1;
+			this->sendOutput( "Error: cannot specify negative values for filter leaf size.\n" , true );
+			return;
 		}
 
+		this->filter_leaf_size_x = x;
+		this->filter_leaf_size_x = y;
+		this->filter_leaf_size_x = z;
 	}
+
+
 
 	void PCDRegistration::pairAlign(const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt, PointCloud::Ptr output, Eigen::Matrix4f &final_transform, bool downsample )
 	{
+
+		PointCloud::Ptr src (new PointCloud);
+		PointCloud::Ptr tgt (new PointCloud);
+
+		*src = this->filterCloud( cloud_src );
+		*tgt = this->filterCloud( cloud_tgt );
+
+		// ICP object.
+		PointCloud::Ptr finalCloud(new PointCloud);
+		pcl::IterativeClosestPoint<PointT , PointT> registration;
+		registration.setInputSource( src );
+		registration.setInputTarget( tgt );
+		registration.setTransformationEpsilon( 0.01 );
+
+		registration.align(*finalCloud);
+		if (registration.hasConverged())
+		{
+			std::cout << "ICP converged." << std::endl
+					  << "The score is " << registration.getFitnessScore() << std::endl;
+			//std::cout << "Transformation matrix:" << std::endl;
+			//std::cout << registration.getFinalTransformation() << std::endl;
+		}
+		else std::cout << "ICP did not converge." << std::endl;
+
+		Eigen::Matrix4f reg_transform = Eigen::Matrix4f::Identity();
+		reg_transform = registration.getFinalTransformation();
+		final_transform = Eigen::Matrix4f::Identity();
+		final_transform( 2 , 3 ) = reg_transform( 2 , 3 );
+		//final_transform = reg_transform.inverse();
+		//final_transform( 1 , 3 ) = 0.0;
+		//final_transform( 0 , 3 ) = 0.0;
+
+		std::cout << final_transform << "\n";
+
 		//
-		  // Downsample for consistency and speed
-		  // \note enable this for large datasets
-		  PointCloud::Ptr src (new PointCloud);
-		  PointCloud::Ptr tgt (new PointCloud);
-		  pcl::VoxelGrid<PointT> grid;
-		  if (downsample)
-		  {
-		    grid.setLeafSize (0.05, 0.05, 0.05);
-		    grid.setInputCloud (cloud_src);
-		    grid.filter (*src);
+		// Transform target back in source frame
+		pcl::transformPointCloud (*cloud_tgt, *output, final_transform);
 
-		    grid.setInputCloud (cloud_tgt);
-		    grid.filter (*tgt);
-		  }
-		  else
-		  {
-		    src = cloud_src;
-		    tgt = cloud_tgt;
-		  }
+		*output += *cloud_src;
+
+		//*src += *finalCloud;
+		//*output = *src;
 
 
+
+
+		  /*
 		  // Compute surface normals and curvature
 		  PointCloudWithNormals::Ptr points_with_normals_src (new PointCloudWithNormals);
 		  PointCloudWithNormals::Ptr points_with_normals_tgt (new PointCloudWithNormals);
 
 		  pcl::NormalEstimation<PointT, PointNormalT> norm_est;
-		  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
+		  pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT> ());
 		  norm_est.setSearchMethod (tree);
 		  norm_est.setKSearch (30);
 
@@ -145,7 +200,6 @@ namespace vba
 		  reg.setMaximumIterations (2);
 		  for (int i = 0; i < 30; ++i)
 		  {
-		    //PCL_INFO ("Iteration Nr. %d.\n", i);
 
 		    // save cloud for visualization purpose
 		    points_with_normals_src = reg_result;
@@ -165,8 +219,6 @@ namespace vba
 
 		    prev = reg.getLastIncrementalTransformation ();
 
-		    // visualize current state
-		    //showCloudsRight(points_with_normals_tgt, points_with_normals_src);
 		  }
 
 			//
@@ -177,24 +229,10 @@ namespace vba
 		  // Transform target back in source frame
 		  pcl::transformPointCloud (*cloud_tgt, *output, targetToSource);
 
-		  //p->removePointCloud ("source");
-		  //p->removePointCloud ("target");
-
-		  //PointCloudColorHandlerCustom<PointT> cloud_tgt_h (output, 0, 255, 0);
-		  //PointCloudColorHandlerCustom<PointT> cloud_src_h (cloud_src, 255, 0, 0);
-		  //p->addPointCloud (output, cloud_tgt_h, "target", vp_2);
-		  //p->addPointCloud (cloud_src, cloud_src_h, "source", vp_2);
-		//HERE
-		//	PCL_INFO ("Press q to continue the registration.\n");
-		//  p->spin ();
-
-		  //p->removePointCloud ("source");
-		  //p->removePointCloud ("target");
-
-		  //add the source to the transformed target
 		  *output += *cloud_src;
 
 		  final_transform = targetToSource;
+		  */
 	}
 
 
@@ -223,5 +261,17 @@ namespace vba
 				std::cout << output;
 			}
 		}
+	}
+
+	PointCloud PCDRegistration::filterCloud( PointCloud::Ptr unfiltered_cloud )
+	{
+		PointCloud filtered_cloud;
+
+		pcl::VoxelGrid< PointT > voxel_filter;
+		voxel_filter.setLeafSize( this->filter_leaf_size_x , this->filter_leaf_size_y , this->filter_leaf_size_z );
+		voxel_filter.setInputCloud( unfiltered_cloud );
+		voxel_filter.filter( filtered_cloud );
+
+		return filtered_cloud;
 	}
 }

@@ -18,7 +18,7 @@ namespace vba
 		this->temp_directories = new std::vector< std::string >();
 
 		this->num_threads = THREAD_1;
-		this->multithreading_enabled = true;
+		this->multithreading_enabled = false;
 		this->redirect_output_flag = false;
 
 	}
@@ -106,27 +106,27 @@ namespace vba
 		//now we will set the number of threads to be used based on how many files were found
 		const unsigned int num_files = this->getNumberofFilesRead();
 
-		if( num_files <= 10 )
+		if( num_files <= 10 && this->multithreading_enabled == true )
 		{
 			this->num_threads = THREAD_1;
 		}
-		else if( num_files <= 20 )
+		else if( num_files <= 20 && this->multithreading_enabled == true )
 		{
 			this->num_threads = THREAD_2;
 		}
-		else if( num_files <= 40 )
+		else if( num_files <= 40 && this->multithreading_enabled == true )
 		{
 			this->num_threads = THREAD_4;
 		}
-		else if( num_files <= 80 )
+		else if( num_files <= 80 && this->multithreading_enabled == true )
 		{
 			this->num_threads = THREAD_8;
 		}
-		else if( num_files <= 160 )
+		else if( num_files <= 160 && this->multithreading_enabled == true )
 		{
 			this->num_threads = THREAD_16;
 		}
-		else if( num_files > 160 )
+		else if( num_files > 160 && this->multithreading_enabled == true )
 		{
 			this->num_threads = THREAD_16;
 		}

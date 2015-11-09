@@ -27,9 +27,12 @@ private slots:
 
     void on_radioButton_toggled(bool checked);
 
+    void on_Browse_output_clicked();
+
 private:
     Ui::MainWindow *ui;
     QString oniFileName;
+    QString outputFolderName;
 
     static void myOutputFunction( std::string output , bool is_error );
 };

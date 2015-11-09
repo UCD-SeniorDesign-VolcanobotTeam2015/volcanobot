@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->label->setStyleSheet("QLabel {background-color : white; }");
     ui->progressBar->setValue(0);
+    outputFolderName = "";
+    oniFileName = "";
 }
 
 MainWindow::~MainWindow()
@@ -48,14 +50,22 @@ void MainWindow::on_Start_clicked()
  output contains where the final pointcloud file will be stored off of argv[2]
 */
 
+if(outputFolderName == ""){
+    ui->label->setText(ui->label->text() + "\nNo output directory selected. Please select an output folder where you would like the final oni to go.");
+    return;
+}
+
+// setup for oni-many-pcd files
 int argc = 3; 
 char* argv[3];
 int length = strlen(oniFileName.toStdString().c_str());
-std::string resFolder = "/home/matt/Documents/volcanobot/res";
 argv[1] = new char[length + 1]();
 strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
 
-argv[2] = "/home/matt/Documents/volcanobot/res/pcdFiles";
+length = strlen(outputFolderName.toStdString().c_str());
+argv[2] = new char[length + 1]();
+strncpy(argv[2], outputFolderName.toStdString().c_str(), length+1);
+
 std::cout <<argv[1] << "-"; // '-' shows ending characters
 std::cout << "\n" << argv[2] << "-";
 vba::oni2pcd::driver(argc, argv);
@@ -63,7 +73,7 @@ vba::oni2pcd::driver(argc, argv);
 vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
 std::string dir(argv[2]);
 dir = dir + "/pcdTemp";
-std::string output(resFolder + "/finalPointCloud");
+std::string output(outputFolderName.toStdString() + "/finalPointCloud");
 mCloudStitcher->setOutputPath( output );
 
 //make a function pointer out of your custom function that follows the signature that I declared in my component.
@@ -94,4 +104,21 @@ void MainWindow::myOutputFunction( std::string output , bool is_error )
 
 	else
 		std::cout << output;
+}
+
+void MainWindow::on_Browse_output_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                "/home",
+                                                QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
+
+    if(dir.size() > 0) {
+    outputFolderName = dir;
+        ui->label->setText(outputFolderName + " selected for output");
+    }
+    else {
+        ui->label->setText("No outputFolder Selected file selected");
+        ui->label->setAlignment(Qt::AlignTop);
+    }
 }

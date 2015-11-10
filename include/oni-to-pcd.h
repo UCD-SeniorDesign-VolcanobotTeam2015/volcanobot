@@ -7,6 +7,7 @@ Description:	Reads an oni file recorded using the Openni2 library and outputs po
 
 #include <pcl/io/openni2_grabber.h>
 #include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
 #include <vector>
 
 #ifndef _ONI_TO_PCD

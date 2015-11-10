@@ -9,6 +9,7 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include "../include/errorMsgHandler.h"
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
+#include <pcl/io/openni2_grabber.h>
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -26,7 +27,7 @@ namespace vba {
 			currentReadFrame = 0,
 			frameSkip = 0,
 			timeout = 0;
-char* pcdWriteDirPath = NULL;
+		char* pcdWriteDirPath = NULL;
 	}
 }
 //#include "../include/mainwindow.h"

@@ -8,6 +8,7 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include "../include/oni-to-pcd.h"
 #include "../include/errorMsgHandler.h"
 #include "../include/mainwindow.h"
+#include "../build/ui_mainwindow.h"
 #include <QtGui/QApplication>
 #include <iostream>
 

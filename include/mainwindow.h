@@ -9,7 +9,7 @@
 
 namespace Ui {
 class MainWindow;
-}
+};
 
 class MainWindow : public QMainWindow
 {

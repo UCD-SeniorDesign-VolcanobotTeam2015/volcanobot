@@ -3,21 +3,25 @@ project( VBA )
 
 find_package (Qt4 REQUIRED)
 find_package (VTK REQUIRED)
-find_package (PCL 1.7.1 REQUIRED)
+find_package (PCL 1.8 REQUIRED)
+find_package (Boost REQUIRED)
 
 set (PROJECT_SOURCES 
-main.cpp oni-to-pcd.cpp 
+main.cpp 
+oni-to-pcd.cpp 
 mainwindow.cpp 
 errorMsgHandler.cpp 
 CloudStitcher.cpp 
-PCDRegistration.cpp )
+PCDRegistration.cpp
+cloud_registration.cpp)
 
 set (project_HEADERS 
 ../include/errorMsgHandler.h 
 ../include/oni-to-pcd.h 
 ../include/mainwindow.h 
 ../include/CloudStitcher.h 
-../include/PCDRegistration.h)
+../include/PCDRegistration.h
+../build/ui_mainwindow.h)
 
 set (project_FORMS   mainwindow.ui)
 set (VTK_LIBRARIES   vtkRendering 
@@ -25,15 +29,16 @@ vtkGraphics
 vtkHybrid 
 QVTK)
 
-set (PROJECT_EXECS ../src/main.cpp 
-../src/oni-to-pcd.cpp 
-../src/errorMsgHandler.cpp 
-../src/mainwindow.cpp 
-../src/CloudStitcher.cpp 
-../src/PCDRegistration.cpp)
+set (PROJECT_EXECS main.cpp 
+oni-to-pcd.cpp 
+errorMsgHandler.cpp 
+mainwindow.cpp 
+CloudStitcher.cpp 
+PCDRegistration.cpp)
 
 include_directories (${PCL_INCLUDE_DIRS} 
-../include)
+../include
+${Boost_INCLUDE_DIRS})
 
 include_directories (${QT_USE_FILE})
 
@@ -47,7 +52,13 @@ QT4_WRAP_UI (project_FORMS_HEADERS ${project_FORMS})
 
 add_definitions (${QT_DEFINITIONS})
 
-add_executable (vba ${project_SOURCES}
-${PROJECT_EXECS} )
+add_executable (vba ${PROJECT_SOURCES} )
 
-target_link_libraries(vba ${PCL_LIBRARIES} ${QT_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(vba ${PCL_LIBRARIES} 
+${QT_LIBRARIES}
+${PCL_COMMON_LIBRARIES} 
+${PCL_IO_LIBRARIES} 
+${PCL_KDTREE_LIBRARY} 
+${PCL_SEARCH_LIBRARY} 
+${PCL_SURFACE_LIBRARY} 
+${PCL_FEATURES_LIBRARY})

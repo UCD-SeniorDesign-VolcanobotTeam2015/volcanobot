@@ -78,10 +78,12 @@ mCloudStitcher->setOutputPath( output );
 
 //make a function pointer out of your custom function that follows the signature that I declared in my component.
 //The function you create just has to follow the lines void myFunctionName( std::string output , bool is_error )
-vba::outputFunction function_pointer = &myOutputFunction;
+
+vba::outputFunction function_pointer = myOutputFunction;
 
 //this is my setter that takes the function pointer and uses it for all output. Otherwise it will just print to std::cout
 //and std::cerr by default
+
 mCloudStitcher->setOutputFunction( function_pointer );
 
 
@@ -108,7 +110,7 @@ void MainWindow::myOutputFunction( std::string output , bool is_error )
 
 void MainWindow::on_Browse_output_clicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
                                                 "/home",
                                                 QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
@@ -122,3 +124,5 @@ void MainWindow::on_Browse_output_clicked()
         ui->label->setAlignment(Qt::AlignTop);
     }
 }
+
+#include "../build/moc_mainwindow.cpp"

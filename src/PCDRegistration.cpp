@@ -1,6 +1,6 @@
 
 
-#include "PCDRegistration.h"
+#include "../include/PCDRegistration.h"
 
 namespace vba
 {
@@ -116,7 +116,7 @@ namespace vba
 		*src = this->filterCloud( cloud_src );
 		*tgt = this->filterCloud( cloud_tgt );
 
-		/*
+		
 		// ICP object.
 		PointCloud::Ptr finalCloud(new PointCloud);
 		pcl::IterativeClosestPoint<PointT , PointT> registration;
@@ -146,11 +146,11 @@ namespace vba
 
 		*output += *cloud_src;
 
-		//*src += *finalCloud;
-		//*output = *src;
+		// *src += *finalCloud;
+		// *output = *src;
 
 
-		*/
+		
 
 
 		  // Compute surface normals and curvature

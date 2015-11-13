@@ -29,6 +29,11 @@
 #include <boost/locale.hpp>
 #include <boost/lexical_cast.hpp>
 
+//include for output
+#include <boost/lockfree/queue.hpp>
+#include <boost/lockfree/policies.hpp>
+#include <boost/atomic.hpp>
+#include <boost/lockfree/spsc_queue.hpp>
 
 #ifndef CLOUDSTITCHER_H_
 #define CLOUDSTITCHER_H_
@@ -93,7 +98,7 @@ namespace vba
 			 * @return: 0 if the operation was successful, -1 if not.
 			 */
 			int setOutputPath( const std::string output_path );
-
+			
 
 
 			/*Public facing function that accepts a function pointer. This function pointer will be passed all
@@ -104,7 +109,8 @@ namespace vba
 			 *
 			 */
 			void setOutputFunction( outputFunction function_pointer );
-
+			
+			void setOutputBuffer( boost::lockfree::spsc_queue<std::string>* buf);
 
 
 			//methods to toggle configuration settings
@@ -143,6 +149,7 @@ namespace vba
 			std::vector<std::string>* temp_directories;
 
 			outputFunction user_output_function;
+			boost::lockfree::spsc_queue<std::string>* output_buffer;
 			bool redirect_output_flag;
 
 

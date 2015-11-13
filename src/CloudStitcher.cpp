@@ -177,6 +177,12 @@ namespace vba
 		this->redirect_output_flag = true;
 	}
 
+	void CloudStitcher::setOutputBuffer( boost::lockfree::spsc_queue<std::string>* buf) 
+	{
+		this->output_buffer = buf;
+		this->output_buffer->push("hello to the other side");
+		this->redirect_output_flag = true;
+	}
 
 	int CloudStitcher::stitchPCDFiles( const std::string directory_path )
 	{
@@ -447,7 +453,9 @@ namespace vba
 	{
 		if( this->redirect_output_flag == true )
 		{
-			this->user_output_function( output , is_error );
+			if(!this->output_buffer->push(output)) {
+				std::cout << "[" << output << "] did not make it too buffer\n";
+			}
 		}
 
 		else

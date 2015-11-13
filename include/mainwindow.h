@@ -6,11 +6,14 @@
 #include <QFileDialog>
 #include <string>
 #include <QPlainTextEdit>
-
+#include <boost/lockfree/spsc_queue.hpp>
+#include <boost/atomic.hpp>
+#include <boost/lockfree/policies.hpp>
 
 namespace Ui {
 class MainWindow;
 }
+//class MainWindow;
 
 class MainWindow : public QMainWindow
 {
@@ -19,9 +22,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void testPass();
 
 private:
-    static void appendMessage(const std::string msg, const bool is_error = false);
+    void appendMessage(const std::string msg, const bool is_error = false);
 
 private slots:
     void on_Browse_clicked();
@@ -36,8 +40,13 @@ private:
     QString oniFileName;
     QString toDisplay;
     int counter;
-    static QPlainTextEdit* pte;
-    static void myOutputFunction( std::string output , bool is_error );
+    boost::lockfree::spsc_queue<std::string>* outputBuffer;
+//    boost::lockfree::spsc_queue<std::string> a(200);
+//    boost::atomic<bool> done;
+    bool done;
+
+    void myOutputFunction( std::string output , bool is_error );
+    void checkOutputBuffer();
 };
 
 #endif // MAINWINDOW_H

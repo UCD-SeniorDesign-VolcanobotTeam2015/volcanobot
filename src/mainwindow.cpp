@@ -5,19 +5,21 @@
 #include "../include/CloudStitcher.h"
 
 
-QPlainTextEdit* MainWindow::pte = new QPlainTextEdit();
+// QPlainTextEdit* MainWindow::pte = new QPlainTextEdit();
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    ui->plainTextEdit->setStyleSheet("QLabel {background-color : white; }");
+    ui->plainTextEdit->setStyleSheet("QLabel {background-color : white; }");
     ui->progressBar->setValue(0);
     counter = 0;
     ui->plainTextEdit->setReadOnly(true);
-    //pte = new QPlainTextEdit(parent);
-
+//    this->outputBuffer = boost::lockfree::spsc_queue(200);
+//    this->pte = new QPlainTextEdit(parent);
+    this->outputBuffer = new boost::lockfree::spsc_queue<std::string>(200);
+    this->done = false;
 }
 
 MainWindow::~MainWindow()
@@ -55,35 +57,43 @@ void MainWindow::on_Start_clicked()
  output contains where the final pointcloud file will be stored off of argv[2]
 */
 
-    if(oniFileName == "") {
-        appendMessage("ERROR: Please browse for an .ONI file before clicking start");
-        return;
-    }
+//    if(oniFileName == "") {
+//        appendMessage("ERROR: Please browse for an .ONI file before clicking start");
+//        return;
+//    }
 int argc = 3; 
 char* argv[3];
-int length = strlen(oniFileName.toStdString().c_str());
+//int length = strlen(oniFileName.toStdString().c_str());
 std::string resFolder = "/home/paul/Documents/res";
-argv[1] = new char[length + 1]();
-strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
+//argv[1] = new char[length + 1]();
+//strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
 
-argv[2] = "/home/paul/Documents/res/pcdFiles";
-std::cout <<argv[1] << "-"; // '-' shows ending characters
-std::cout << "\n" << argv[2] << "-";
-vba::oni2pcd::driver(argc, argv);
+//argv[2] = "/home/paul/Documents/res/pcdFiles";
+//std::cout <<argv[1] << "-"; // '-' shows ending characters
+//std::cout << "\n" << argv[2] << "-";
+
+
+//vba::oni2pcd::driver(argc, argv);
 
 vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
 std::string dir(argv[2]);
 dir = dir + "/pcdTemp";
-std::string output(resFolder + "/finalPointCloud");
-mCloudStitcher->setOutputPath( output );
+//std::string output(resFolder + "/finalPointCloud");
+//mCloudStitcher->setOutputPath( output );
+
+mCloudStitcher->setOutputBuffer(this->outputBuffer);
+std::cout << "after setoutput buffer\n";
+this->done = true;
+checkOutputBuffer();
+return;
 
 //make a function pointer out of your custom function that follows the signature that I declared in my component.
 //The function you create just has to follow the lines void myFunctionName( std::string output , bool is_error )
-vba::outputFunction function_pointer = &appendMessage;
+//vba::outputFunction function_pointer = &appendMessage;
 
 //this is my setter that takes the function pointer and uses it for all output. Otherwise it will just print to std::cout
 //and std::cerr by default
-mCloudStitcher->setOutputFunction( function_pointer );
+//mCloudStitcher->setOutputFunction( function_pointer );
 
 
 mCloudStitcher->stitchPCDFiles( dir );
@@ -91,6 +101,29 @@ std::cout << "made if back here\n";
 delete mCloudStitcher;
 }
 
+void MainWindow::checkOutputBuffer() {
+    std::cout << "inside checkoutputbuffer\n";
+    std::string t = "";
+    while(!done){
+        if(!this->outputBuffer->empty()){
+            if(this->outputBuffer->pop(t)) {
+                std::cout << t << "\n";
+                appendMessage(t);
+            }
+        }
+    }
+    std::cout << "after first loop\n";
+    while(!this->outputBuffer->empty()){
+        if(!this->outputBuffer->empty()){
+            if(this->outputBuffer->pop(t)) {
+                std::cout << t << "\n";
+                appendMessage(t);
+            }
+        }
+    }
+    std::cout << "after second loop\n";
+
+}
 
 void MainWindow::on_radioButton_toggled(bool checked)
 {
@@ -109,9 +142,12 @@ void MainWindow::myOutputFunction( std::string output , bool is_error )
 	else
 		std::cout << output;
 }
+void MainWindow::testPass() {
+std::cout << "inside testPass\n";
+}
 // ** Helper Functions ** //
 void MainWindow::appendMessage(const std::string msg,const bool is_error) {
     QString output = QString::fromStdString(msg);
-//    ui->plainTextEdit->appendPlainText(output);
+    ui->plainTextEdit->appendPlainText(output);
 
 }

@@ -71,18 +71,19 @@ namespace vba
 			*final += *result;
 			*final = this->filterCloud( final );
 
-			std::cout << "total point count: " << final->size() << "\n";
+			//std::cout << "total point count: " << final->size() << "\n";
+			std::cout << "File [ " << i << " / " << this->file_list->size() << " ] Stitched: " << final->size() << " Points.\n";
 
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
 
-
+			/*
 			std::stringstream ss;
 			ss << "temp_cloud" << i << ".pcd";
 			pcl::io::savePCDFile( ss.str() , *final , true );
 
 			this->sendOutput( "saved new pcd file\n", false );
-
+			*/
 		}
 
 		std::stringstream filename;

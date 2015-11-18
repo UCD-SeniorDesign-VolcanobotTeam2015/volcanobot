@@ -75,14 +75,6 @@ namespace vba
 
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
-
-
-			std::stringstream ss;
-			ss << "temp_cloud" << i << ".pcd";
-			pcl::io::savePCDFile( ss.str() , *final , true );
-
-			this->sendOutput( "saved new pcd file\n", false );
-
 		}
 
 		std::stringstream filename;

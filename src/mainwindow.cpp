@@ -25,7 +25,7 @@ void MainWindow::on_Browse_clicked()
     QStringList files = QFileDialog::getOpenFileNames(
                             this,
                             "Select one or more files to open",
-                            "/home",
+                            QDir::homePath(),
                             "Text files (*.oni)");
     if(files.size() > 0) {
 	oniFileName = files[0];
@@ -88,8 +88,9 @@ mCloudStitcher->setOutputFunction( function_pointer );
 
 
 mCloudStitcher->stitchPCDFiles( dir );
-std::cout << "made if back here\n";
+std::cout << "Completed.\n";
 delete mCloudStitcher;
+return;
 }
 
 
@@ -97,21 +98,24 @@ void MainWindow::on_radioButton_toggled(bool checked)
 {
     ui->label->setVisible(checked);
     ui->progressBar->setValue(ui->progressBar->value()+1);
+    return;
 }
 
 void MainWindow::myOutputFunction( std::string output , bool is_error )
 {
-	if( is_error == true )
+	if( is_error == true ) {
 		std::cerr << output;
+    }
 
-	else
+	else {
 		std::cout << output;
+    }
 }
 
 void MainWindow::on_Browse_output_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
-                                                "/home",
+                                                QDir::homePath(),
                                                 QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
 
@@ -125,4 +129,5 @@ void MainWindow::on_Browse_output_clicked()
     }
 }
 
+// run moc ../include/mainwindow.h -o moc_mainwindow.cpp from the build directory of the project to generate
 #include "../build/moc_mainwindow.cpp"

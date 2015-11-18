@@ -17,9 +17,9 @@ INCLUDEPATH += /usr/local/Cellar/boost/1.59.0/include \
 			/usr/local/Cellar/eigen/3.2.6/include/eigen3 \ 
 			/usr/local/Cellar/flann/1.8.4_1/include \
 			/usr/local/Cellar/vtk/6.3.0/include/vtk-6.3 \
-			/usr/local/Cellar/openni2/2.2.0.33/include/ni2
+# 			/usr/local/Cellar/openni2/2.2.0.33/include/ni2
 
-# LIBS +=  /usr/local/Cellar/boost/1.59.0/lib -lchrono -lfilesystem \
+# LIBS +=  /usr/local/Cellar/boost/1.59.0/lib \
 # 			/usr/local/Cellar/pcl/HEAD/lib \
 # 			/usr/local/Cellar/eigen/3.2.6/lib \
 # 			/usr/local/Cellar/flann/1.8.4_1/lib \
@@ -29,7 +29,8 @@ INCLUDEPATH += /usr/local/Cellar/boost/1.59.0/include \
 HEADERS += ../include/oni-to-pcd.h \
            ../include/errorMsgHandler.h \
            ../include/mainwindow.h \
-           ../include/CloudStitcher.h
+           ../include/CloudStitcher.h \
+           ../include/PCDRegistration.h
 
 FORMS += ../src/mainwindow.ui
 

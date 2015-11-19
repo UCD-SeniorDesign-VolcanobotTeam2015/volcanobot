@@ -3,6 +3,8 @@
 #include "../include/oni-to-pcd.h"
 #include <iostream>
 #include "../include/CloudStitcher.h"
+#include <boost/thread.hpp>
+#include <boost/date_time.hpp>
 
 
 // QPlainTextEdit* MainWindow::pte = new QPlainTextEdit();
@@ -20,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    this->pte = new QPlainTextEdit(parent);
     this->outputBuffer = new boost::lockfree::spsc_queue<std::string>(200);
     this->done = false;
+    connect(this, SIGNAL(appendToConcel(QString)), ui->plainTextEdit, SLOT(appendPlainText(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -49,6 +52,26 @@ void MainWindow::on_Cancel_clicked()
    this->close();
 }
 
+void MainWindow::processOutputQueue(){
+    std::string temp = "";
+    boost::posix_time::seconds waitTime(10);
+    while(!done){
+        if(this->outputBuffer->empty()){
+            boost::this_thread::sleep(waitTime);
+        }
+        else {
+            if(this->outputBuffer->pop(temp)) {
+                //this->appendMessage(temp, false);
+                QString output = QString::fromStdString(t);
+                emit appendToConcel(output);
+                temp = ""; // clear value for saftey
+            }
+        }
+    }
+    return;
+}
+
+
 void MainWindow::on_Start_clicked()
 {
 /*
@@ -61,10 +84,10 @@ void MainWindow::on_Start_clicked()
 //        appendMessage("ERROR: Please browse for an .ONI file before clicking start");
 //        return;
 //    }
-int argc = 3; 
-char* argv[3];
+//int argc = 3;
+//char* argv[3];
 //int length = strlen(oniFileName.toStdString().c_str());
-std::string resFolder = "/home/paul/Documents/res";
+//std::string resFolder = "/home/paul/Documents/res";
 //argv[1] = new char[length + 1]();
 //strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
 
@@ -76,13 +99,19 @@ std::string resFolder = "/home/paul/Documents/res";
 //vba::oni2pcd::driver(argc, argv);
 
 vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
-std::string dir(argv[2]);
-dir = dir + "/pcdTemp";
+//std::string dir(argv[2]);
+//dir = dir + "/pcdTemp";
 //std::string output(resFolder + "/finalPointCloud");
 //mCloudStitcher->setOutputPath( output );
 
 mCloudStitcher->setOutputBuffer(this->outputBuffer);
-std::cout << "after setoutput buffer\n";
+
+
+// worker test
+boost::thread workerThread(&MainWindow::processOutputQueue, this);
+return;
+workerThread.join();
+return;
 this->done = true;
 checkOutputBuffer();
 return;
@@ -96,9 +125,9 @@ return;
 //mCloudStitcher->setOutputFunction( function_pointer );
 
 
-mCloudStitcher->stitchPCDFiles( dir );
+//mCloudStitcher->stitchPCDFiles( dir );
 std::cout << "made if back here\n";
-delete mCloudStitcher;
+//delete mCloudStitcher;
 }
 
 void MainWindow::checkOutputBuffer() {

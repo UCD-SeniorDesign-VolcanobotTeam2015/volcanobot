@@ -26,6 +26,7 @@ public:
 
 private:
     void appendMessage(const std::string msg, const bool is_error = false);
+    void processOutputQueue();
 
 private slots:
     void on_Browse_clicked();
@@ -34,6 +35,9 @@ private slots:
     void on_Start_clicked();
 
     void on_radioButton_toggled(bool checked);
+
+signals:
+    void appendToConcel(QString msg);
 
 private:
     Ui::MainWindow *ui;

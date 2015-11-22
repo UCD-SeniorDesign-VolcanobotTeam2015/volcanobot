@@ -20,14 +20,14 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_Browse_clicked();
-    void on_Cancel_clicked();
+    void on_BrowseOni_clicked();
+    void on_Close_clicked();
 
     void on_Start_clicked();
 
     void on_radioButton_toggled(bool checked);
 
-    void on_Browse_output_clicked();
+    void on_BrowseOutput_clicked();
 
 private:
     Ui::MainWindow *ui;

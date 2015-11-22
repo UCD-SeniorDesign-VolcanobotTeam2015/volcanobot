@@ -58,19 +58,15 @@ int vba::oni2pcd::driver(int argc, char* argv[]){
  		return EXIT_FAILURE;
 	}
 
-	// // int threadTimout = 
-
-	// vba::oni2pcd::readOni (argv[1], argv[2]);
 	boost::thread oni2pcd(vba::oni2pcd::readOni, argv[1], argv[2], 0);
 
 	if (oni2pcd.try_join_for (boost::chrono::minutes(2))) {
-		std::cout << "\nDone\n";
+		std::cout << "\nFinished reading .oni(s).\n\n";
+		return EXIT_SUCCESS;
 	} else {
-		std::cout << "\nBADDDDD!!!!!\n";
+		std::cout << "\nEncountered a problem reading .oni(s).\n\n";
 		return EXIT_FAILURE;
 	}
-
-	return EXIT_SUCCESS;
 }
 
 /***************************************************************
@@ -91,7 +87,14 @@ void vba::oni2pcd::readOni (const char* oniFile,
 	/*
 	create a pointer to an Openni2 grabber instance, register a callback for the grabber, bind the callback writeCloudCb from our vba::oni2pcd namespace
 	*/
-	pcl::io::OpenNI2Grabber *grabber = new pcl::io::OpenNI2Grabber (oniFile);
+	pcl::io::OpenNI2Grabber *grabber;
+	try {
+		grabber = new pcl::io::OpenNI2Grabber (oniFile);
+	} catch (pcl::IOException pclIo) {
+		std::cerr << "\nError: Could not open the supplied .oni. The file may be corrupted. No files will be written.\n";
+		return;
+	}
+
 	boost::function<void (const CloudConstPtr&) > f = boost::bind (&vba::oni2pcd::writeCloudCb, _1);
 	boost::signals2::connection c = grabber->registerCallback (f);
 
@@ -100,7 +103,7 @@ void vba::oni2pcd::readOni (const char* oniFile,
 	*/
 	vba::oni2pcd::setFrameSkip (framesToSkip);
 	vba::oni2pcd::setFrameInfo(grabber->getDevice()->getDepthFrameCount());
-	std::cout << "\nFrames to read " << vba::oni2pcd::framesToRead << '\n';
+	std::cout << "\n\nFrames to read " << vba::oni2pcd::framesToRead << "\n\n";
 
 	/*
 	set write pcd directory path
@@ -112,6 +115,8 @@ void vba::oni2pcd::readOni (const char* oniFile,
 		boost::this_thread::sleep_for( boost::chrono::milliseconds( 1 ) );
 	}
 	grabber->stop();
+	delete grabber;
+	return;
 }
 
 /*
@@ -185,7 +190,7 @@ void vba::oni2pcd::writeCloudCb (const CloudConstPtr& cloud) {
 
 		ss << vba::oni2pcd::pcdWriteDirPath << "/frame_" << std::setfill ('0') << std::setw(6) << vba::oni2pcd::currentReadFrame << ".pcd";
 
-		std::cout <<"Wrote a cloud to " << ss.str() << '\n';
+		std::cout <<"\nWrote a cloud to " << ss.str() << '\n';
 		w.writeBinaryCompressed (ss.str(), *cloud);
 		++vba::oni2pcd::currentReadFrame;
 	}

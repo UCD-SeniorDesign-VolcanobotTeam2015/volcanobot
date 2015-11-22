@@ -20,7 +20,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_Browse_clicked()
+void MainWindow::on_BrowseOni_clicked()
 {
     QStringList files = QFileDialog::getOpenFileNames(
                             this,
@@ -30,16 +30,20 @@ void MainWindow::on_Browse_clicked()
     if(files.size() > 0) {
 	oniFileName = files[0];
         ui->label->setText(oniFileName + " selected");
+        ui->label->setAlignment(Qt::AlignTop);
 	}
     else {
-        ui->label->setText("No .ONI file selected");
+        ui->label->setText("No .Oni file selected");
         ui->label->setAlignment(Qt::AlignTop);
     }
+
+    return;
 }
 
-void MainWindow::on_Cancel_clicked()
+void MainWindow::on_Close_clicked()
 {
    this->close();
+   return;
 }
 
 void MainWindow::on_Start_clicked()
@@ -52,7 +56,14 @@ void MainWindow::on_Start_clicked()
 
 if(outputFolderName == ""){
     ui->label->setText(ui->label->text() + "\nNo output directory selected. Please select an output folder where you would like the final oni to go.");
+    ui->label->setAlignment(Qt::AlignTop);
     return;
+}
+
+if (oniFileName == ""){
+    ui->label->setText(ui->label->text() + "\nNo .oni file selected. Please select a .oni file to process.");
+    ui->label->setAlignment(Qt::AlignTop);
+    return;    
 }
 
 // setup for oni-many-pcd files
@@ -88,8 +99,12 @@ mCloudStitcher->setOutputFunction( function_pointer );
 
 
 mCloudStitcher->stitchPCDFiles( dir );
-std::cout << "Completed.\n";
+ui->label->setText(ui->label->text() + "\n\nCompleted.\n\n");
+ui->label->setAlignment(Qt::AlignTop);
+std::cout << "\n\nCompleted.\n\n";
 delete mCloudStitcher;
+delete[] argv[1];
+delete[] argv[2];
 return;
 }
 
@@ -110,9 +125,10 @@ void MainWindow::myOutputFunction( std::string output , bool is_error )
 	else {
 		std::cout << output;
     }
+    return;
 }
 
-void MainWindow::on_Browse_output_clicked()
+void MainWindow::on_BrowseOutput_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
                                                 QDir::homePath(),
@@ -122,11 +138,14 @@ void MainWindow::on_Browse_output_clicked()
     if(dir.size() > 0) {
     outputFolderName = dir;
         ui->label->setText(outputFolderName + " selected for output");
-    }
-    else {
-        ui->label->setText("No outputFolder Selected file selected");
         ui->label->setAlignment(Qt::AlignTop);
     }
+    else {
+        ui->label->setText("No output folder selected.");
+        ui->label->setAlignment(Qt::AlignTop);
+    }
+
+    return;
 }
 
 // run moc ../include/mainwindow.h -o moc_mainwindow.cpp from the build directory of the project to generate

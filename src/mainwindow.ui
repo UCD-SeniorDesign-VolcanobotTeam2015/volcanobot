@@ -75,7 +75,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>PointCloud and Mesh Generator</string>
+   <string>Mesh Reconstruction Software by VolcanoBot A-team</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLabel" name="label">
@@ -141,7 +141,7 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="Cancel">
+    <widget class="QPushButton" name="Close">
      <property name="geometry">
       <rect>
        <x>370</x>
@@ -151,7 +151,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Cancel</string>
+      <string>Close</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Start">
@@ -167,7 +167,7 @@
       <string>Start</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Browse">
+    <widget class="QPushButton" name="BrowseOni">
      <property name="geometry">
       <rect>
        <x>191</x>
@@ -177,10 +177,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>Browse</string>
+      <string>Select .Oni File</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Browse_output">
+    <widget class="QPushButton" name="BrowseOutput">
      <property name="geometry">
       <rect>
        <x>190</x>
@@ -193,10 +193,10 @@
       <string>Select Output Folder</string>
      </property>
     </widget>
-    <zorder>Browse</zorder>
+    <zorder>BrowseOni</zorder>
     <zorder>Start</zorder>
-    <zorder>Cancel</zorder>
-    <zorder>Browse_output</zorder>
+    <zorder>Close</zorder>
+    <zorder>BrowseOutput</zorder>
    </widget>
    <zorder>frame</zorder>
    <zorder>label</zorder>

@@ -5,6 +5,8 @@
 namespace vba
 {
 
+	pcl::visualization::PCLVisualizer *p;
+
 	PCDRegistration::PCDRegistration( const std::vector< std::string >& files , std::string output_file )
 	{
 		this->file_list = new std::vector< std::string >( files );
@@ -27,6 +29,11 @@ namespace vba
 
 	int PCDRegistration::start()
 	{
+		char** argv;
+		int argc = 1;
+		p = new pcl::visualization::PCLVisualizer( "cloud_viewer" , true );
+		//pcl::visualization::CloudViewer viewer( "cloud_viewer" );
+
 		std::stringstream output;
 		output << "processing " << this->file_list->size() << " frames.\n";
 		this->sendOutput( output.str() , false );
@@ -76,6 +83,19 @@ namespace vba
 
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
+
+			if( i == 2 )
+			{
+				std::cout << "stopping";
+				PCL_INFO ("Press q to begin the registration.\n");
+				  p-> spin();
+				//p->spin();
+			}
+
+			std::stringstream ss;
+			ss << "temp_cloud" << i;
+			p->addPointCloud( result , ss.str() );
+			p->spinOnce();
 
 			/*
 			std::stringstream ss;

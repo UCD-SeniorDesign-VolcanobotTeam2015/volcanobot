@@ -31,6 +31,7 @@
 
 //include for the actual viewing of point clouds on screen
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/visualization/cloud_viewer.h>
 
 
 

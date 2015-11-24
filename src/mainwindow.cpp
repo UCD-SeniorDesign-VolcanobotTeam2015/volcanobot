@@ -73,7 +73,7 @@ vba::oni2pcd::driver(argc, argv);
 vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
 std::string dir(argv[2]);
 dir = dir + "/pcdTemp";
-std::string output(outputFolderName.toStdString() + "/finalPointCloud");
+std::string output(outputFolderName.toStdString() + "/finalPointCloud.pcd");
 mCloudStitcher->setOutputPath( output );
 
 //make a function pointer out of your custom function that follows the signature that I declared in my component.
@@ -85,8 +85,9 @@ vba::outputFunction function_pointer = &myOutputFunction;
 mCloudStitcher->setOutputFunction( function_pointer );
 
 
+//mCloudStitcher->stitchPCDFiles( "/home/matt/Documents/volcanobot/res/pcdFiles/pcdTemp/pcdTemp/" );
 mCloudStitcher->stitchPCDFiles( dir );
-std::cout << "made if back here\n";
+
 delete mCloudStitcher;
 }
 

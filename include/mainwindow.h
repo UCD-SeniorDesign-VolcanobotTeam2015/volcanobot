@@ -9,6 +9,7 @@
 #include <boost/lockfree/spsc_queue.hpp>
 #include <boost/atomic.hpp>
 #include <boost/lockfree/policies.hpp>
+#include <boost/thread.hpp>
 
 namespace Ui {
 class MainWindow;
@@ -36,21 +37,45 @@ private slots:
 
     void on_radioButton_toggled(bool checked);
 
+    void testFunction();
+    void cloudStitcherController();
+
+    void nextStep(const int&);
+
+
 signals:
+
     void appendToConcel(QString msg);
 
+    void start(int);
+    void oniToPCDFinished(int);
+    void cloudStitcherFinished();
+
+
 private:
+    // Const
+    static const int oniToPCD = 0;
+    static const int cloudStitcher = 1;
+
     Ui::MainWindow *ui;
     QString oniFileName;
     QString toDisplay;
     int counter;
     boost::lockfree::spsc_queue<std::string>* outputBuffer;
-//    boost::lockfree::spsc_queue<std::string> a(200);
-//    boost::atomic<bool> done;
+
+
+    boost::thread* outputMessageThread;
+    boost::thread* taskThread;
+
     bool done;
 
     void myOutputFunction( std::string output , bool is_error );
     void checkOutputBuffer();
+
+    void oniToPCDController();
+    void clearTaskThread();
+
+
 };
 
 #endif // MAINWINDOW_H

@@ -107,9 +107,12 @@ namespace vba
 			 *
 			 * @param: Function pointer following the signature   void functionName( std::string )
 			 *
-			 */
-			void setOutputFunction( outputFunction function_pointer );
-			
+		
+			 */	
+		        /*Public facing function that accepts a queue where class output will be redirected. If never set
+			 * output will be sent to std::out & std::error
+			 * @param: Buf is a pointer to a buffer that will be monitored by driver class			
+			 */		
 			void setOutputBuffer( boost::lockfree::spsc_queue<std::string>* buf);
 
 

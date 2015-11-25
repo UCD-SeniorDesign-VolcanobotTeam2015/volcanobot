@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(appendToConcel(QString)), ui->plainTextEdit, SLOT(appendPlainText(QString)));
     connect(this, SIGNAL(start(int)), this, SLOT(nextStep(int)));
     connect(this, SIGNAL(oniToPCDFinished(int)), this, SLOT(nextStep(int)));
+    outputFolderName = "";
+    oniFileName = "";
+    taskThread = NULL;
 }
 
 MainWindow::~MainWindow()
@@ -100,18 +103,15 @@ void MainWindow::cloudStitcherController() {
     std::cout << "\n" << argv[2] << "-";
      */
 
-    int argc = 3;
-    char* argv[3];
-    int length = strlen(oniFileName.toStdString().c_str());
-    std::string resFolder = "/home/paul/Documents/res";
-
-    argv[2] = "/home/paul/Documents/res/pcdFiles";
-
     vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
-    std::string dir(argv[2]);
-    dir = dir + "/pcdTemp";
-    std::string output(resFolder + "/finalPointCloud");
-    mCloudStitcher->setOutputPath( output );
+    std::string dir(this->outputFolderName.toStdString());
+
+    std::string pcdFilesToStitchDir(this->outputFolderName.toStdString() + "/pcdTemp");
+    std::string stitchedOniOutputDir (this->outputFolderName.toStdString());
+    std::cout << "inside cloudstitcher and pcdFilestoSttichdir = " << pcdFilesToStitchDir << "-\n";
+    std::cout << "inside cloudstitcher and stitchonioutputdir = " << stitchedOniOutputDir << "-\n";
+
+    mCloudStitcher->setOutputPath( stitchedOniOutputDir );
 
     mCloudStitcher->setOutputBuffer(this->outputBuffer);
 
@@ -132,11 +132,10 @@ void MainWindow::cloudStitcherController() {
     //and std::cerr by default
     //mCloudStitcher->setOutputFunction( function_pointer );
 
-
-    mCloudStitcher->stitchPCDFiles( dir );
+    mCloudStitcher->stitchPCDFiles( stitchedOniOutputDir );
 
     delete mCloudStitcher;
-    std::cout << "inside cloudstitcherController\n";
+    std::cout << "done wtih mcloudstitchercontroller \n";
     return;
 //    emit cloudStitcherFinished();
 }
@@ -189,31 +188,37 @@ void MainWindow::oniToPCDController(){
      dir contains where the pcdfiles will actually be output
      output contains where the final pointcloud file will be stored off of argv[2]
     */
+std::cout << "inside onittopcdcontroller\n";
+if(outputFolderName == ""){
+    appendMessage("No output directory selected. Please select an output folder where you would like the final oni to go.");
+    return;
+}
 
-    if(oniFileName == "") {
+if(oniFileName == "") {
         appendMessage("ERROR: Please browse for an .ONI file before clicking start");
         return;
     }
-    int argc = 3;
-    char* argv[3];
-    int length = strlen(oniFileName.toStdString().c_str());
-    std::string resFolder = "/home/paul/Documents/res";
-    argv[1] = new char[length + 1]();
-    strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
+// setup for oni-many-pcd files
+int argc = 3; 
+char* argv[3];
+int length = strlen(oniFileName.toStdString().c_str());
+argv[1] = new char[length + 1]();
+strncpy(argv[1], oniFileName.toStdString().c_str(), length+1);
 
-    argv[2] = "/home/paul/Documents/res/pcdFiles";
-    std::cout <<argv[1] << "-"; // '-' shows ending characters
-    std::cout << "\n" << argv[2] << "-";
+length = strlen(outputFolderName.toStdString().c_str());
+argv[2] = new char[length + 1]();
+strncpy(argv[2], outputFolderName.toStdString().c_str(), length+1);
 
-
-    vba::oni2pcd::driver(argc, argv);
-    emit oniToPCDFinished(cloudStitcher);
+std::cout <<argv[1] << "-"; // '-' shows ending characters
+std::cout << "\n" << argv[2] << "-";
+vba::oni2pcd::driver(argc, argv);
+emit oniToPCDFinished(cloudStitcher);
 
 }
 
 void MainWindow::on_Start_clicked()
 {
-    emit start(cloudStitcher);
+    emit start(oniToPCD);
 
 /*
  argv[2] contains path to output pcdfiles 
@@ -318,5 +323,19 @@ std::cout << "inside testPass\n";
 void MainWindow::appendMessage(const std::string msg,const bool is_error) {
     QString output = QString::fromStdString(msg);
     ui->plainTextEdit->appendPlainText(output);
+}
+void MainWindow::on_Browse_output_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                "/home",
+                                                QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
 
+    if(dir.size() > 0) {
+    outputFolderName = dir;
+        appendMessage(outputFolderName.toStdString() + " selected for output");
+    }
+    else {
+        appendMessage("No outputFolder Selected file selected");
+    }
 }

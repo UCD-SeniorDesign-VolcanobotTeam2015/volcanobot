@@ -43,6 +43,8 @@ private slots:
     void nextStep(const int&);
 
 
+    void on_Browse_output_clicked();
+
 signals:
 
     void appendToConcel(QString msg);
@@ -60,6 +62,7 @@ private:
     Ui::MainWindow *ui;
     QString oniFileName;
     QString toDisplay;
+    QString outputFolderName;
     int counter;
     boost::lockfree::spsc_queue<std::string>* outputBuffer;
 

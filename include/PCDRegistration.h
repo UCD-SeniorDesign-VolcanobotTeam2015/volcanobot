@@ -32,6 +32,9 @@
 //include for the actual viewing of point clouds on screen
 #include <pcl/visualization/pcl_visualizer.h>
 
+// include for output buffer
+#include <boost/lockfree/spsc_queue.hpp>
+
 
 
 
@@ -40,11 +43,8 @@
 namespace vba
 {
 
-	//Just typedeffing the signature of a function pointer we can accept from the user for output redirection
-	typedef void (*outputFunction ) (std::string output , bool is_error );
 
-
-	typedef pcl::PointXYZ PointT;
+	typedef pcl::PointXYZRGB PointT;
 	typedef pcl::PointCloud<PointT> PointCloud;
 	typedef pcl::PointNormal PointNormalT;
 	typedef pcl::PointCloud<PointNormalT> PointCloudWithNormals;
@@ -97,11 +97,13 @@ namespace vba
 			 * @param: Function pointer following the signature   void functionName( std::string )
 			 *
 			 */
-			void setOutputFunction( outputFunction function_pointer );
+			void setOutputBuffer( boost::lockfree::spsc_queue<std::string>* output_buffer );
+
+			void setFilterLeafSize( float x , float y , float z );
 
 		private:
 
-			int loadPCDData( PCD* target  );
+
 			void pairAlign(const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt, PointCloud::Ptr output, Eigen::Matrix4f &final_transform, bool downsample );
 
 
@@ -116,11 +118,22 @@ namespace vba
 			void sendOutput( std::string output , bool is_error );
 
 
+			PointCloud filterCloud( PointCloud::Ptr unfiltered_cloud );
+
+
 			std::vector< std::string >* file_list;
 			std::string output_filename;
 
-			outputFunction user_output_function;
+			boost::lockfree::spsc_queue<std::string>* output_buffer;
 			bool redirect_output_flag;
+
+			float filter_leaf_size_x;
+			float filter_leaf_size_y;
+			float filter_leaf_size_z;
+
+			bool lock_x_transformations;
+			bool lock_y_transformations;
+			bool lock_z_transformations;
 
 	};
 

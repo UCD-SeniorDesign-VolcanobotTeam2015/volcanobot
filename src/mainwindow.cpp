@@ -7,8 +7,6 @@
 #include <boost/date_time.hpp>
 
 
-// QPlainTextEdit* MainWindow::pte = new QPlainTextEdit();
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -18,17 +16,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->progressBar->setValue(0);
     counter = 0;
     ui->plainTextEdit->setReadOnly(true);
-//    this->outputBuffer = boost::lockfree::spsc_queue(200);
-//    this->pte = new QPlainTextEdit(parent);
+    ui->plainTextEdit->setCenterOnScroll(true);
+    ui->plainTextEdit->ensureCursorVisible();
     this->outputBuffer = new boost::lockfree::spsc_queue<std::string>(200);
     this->done = false;
 
     outputMessageThread = new boost::thread(&MainWindow::processOutputQueue, this);
 
     // process the order in which we want tasks to be run
-    connect(this, SIGNAL(appendToConcel(QString)), ui->plainTextEdit, SLOT(appendPlainText(QString)));
+    connect(this, SIGNAL(appendToConsole(QString)), ui->plainTextEdit, SLOT(insertPlainText(QString)));
     connect(this, SIGNAL(start(int)), this, SLOT(nextStep(int)));
     connect(this, SIGNAL(oniToPCDFinished(int)), this, SLOT(nextStep(int)));
+    connect(this, SIGNAL(appendToConsole(QString)), this, SLOT(ensureCursorVisible(QString)));
     outputFolderName = "";
     oniFileName = "";
     taskThread = NULL;
@@ -43,6 +42,10 @@ MainWindow::~MainWindow()
     // TODO add cleanup for threads
 }
 
+void MainWindow::ensureCursorVisible(QString s){
+    ui->plainTextEdit->ensureCursorVisible();
+    return;
+}
 
 void MainWindow::nextStep(const int& step) {
 
@@ -59,7 +62,7 @@ void MainWindow::nextStep(const int& step) {
             break;
 
     default :
-        appendToConcel(QString("Error. Could not find nextStep instruction"));
+        appendToConsole(QString("Error. Could not find nextStep instruction"));
         break;
     }
 
@@ -76,12 +79,6 @@ void MainWindow::clearTaskThread() {
     taskThread = NULL;
 }
 
-void MainWindow::testFunction(){
-    QString t = "inside testFunction";
-    outputBuffer->push(t.toStdString());
-    done = true;
-
-}
 
 void MainWindow::cloudStitcherController() {
 
@@ -131,7 +128,7 @@ std::cout << "inside cloudstitchercontroller " << boost::this_thread::get_id() <
     //and std::cerr by default
     //mCloudStitcher->setOutputFunction( function_pointer );
 
-    mCloudStitcher->stitchPCDFiles( stitchedOniOutputDir );
+    mCloudStitcher->stitchPCDFiles( pcdFilesToStitchDir );
 
     delete mCloudStitcher;
     std::cout << "done wtih mcloudstitchercontroller \n";
@@ -148,11 +145,10 @@ void MainWindow::on_Browse_clicked()
                             "Text files (*.oni)");
     if(files.size() > 0) {
 	oniFileName = files[0];
-        appendMessage(oniFileName.toStdString() + " selected");
+        appendMessage(oniFileName.toStdString() + " selected" );
 	}
     else {
         appendMessage("No .ONI file selected");
-//        ui->plainTextEdit->setAlignment(Qt::AlignTop);
     }
 }
 
@@ -172,9 +168,8 @@ void MainWindow::processOutputQueue(){
             if(this->outputBuffer->pop(temp)) {
                 //this->appendMessage(temp, false);
                 QString output = QString::fromStdString(temp);
-                emit appendToConcel(output);
-                std::cout << "after appendtoconcel with " << output.toStdString() << "\n";
-                temp = ""; // clear value for saftey
+                emit appendToConsole(output);
+                temp = ""; // clear value for safety
             }
         }
     }
@@ -188,14 +183,13 @@ void MainWindow::oniToPCDController(){
      dir contains where the pcdfiles will actually be output
      output contains where the final pointcloud file will be stored off of argv[2]
     */
-std::cout << "inside onittopcdcontroller " << boost::this_thread::get_id() << std::endl;
 if(outputFolderName == ""){
-    appendMessage("No output directory selected. Please select an output folder where you would like the final oni to go.");
+    this->outputBuffer->push("No output directory selected. Please select an output folder where you would like the final oni to go.");
     return;
 }
 
 if(oniFileName == "") {
-        appendMessage("ERROR: Please browse for an .ONI file before clicking start");
+        this->outputBuffer->push("ERROR: Please browse for an .ONI file before clicking start");
         return;
     }
 // setup for oni-many-pcd files
@@ -211,6 +205,7 @@ strncpy(argv[2], outputFolderName.toStdString().c_str(), length+1);
 
 std::cout <<argv[1] << "-"; // '-' shows ending characters
 std::cout << "\n" << argv[2] << "-";
+vba::oni2pcd::setOutputBuffer(this->outputBuffer);
 vba::oni2pcd::driver(argc, argv);
 emit oniToPCDFinished(cloudStitcher);
 
@@ -219,7 +214,7 @@ emit oniToPCDFinished(cloudStitcher);
 void MainWindow::on_Start_clicked()
 {
     std::cout << "inside start " << boost::this_thread::get_id() << std::endl;
-    emit start(cloudStitcher);
+    emit start(oniToPCD);
 
 /*
  argv[2] contains path to output pcdfiles 
@@ -276,52 +271,16 @@ void MainWindow::on_Start_clicked()
 //delete mCloudStitcher;
 }
 
-void MainWindow::checkOutputBuffer() {
-    std::cout << "inside checkoutputbuffer\n";
-    std::string t = "";
-    while(!done){
-        if(!this->outputBuffer->empty()){
-            if(this->outputBuffer->pop(t)) {
-                std::cout << t << "\n";
-                appendMessage(t);
-            }
-        }
-    }
-    std::cout << "after first loop\n";
-    while(!this->outputBuffer->empty()){
-        if(!this->outputBuffer->empty()){
-            if(this->outputBuffer->pop(t)) {
-                std::cout << t << "\n";
-                appendMessage(t);
-            }
-        }
-    }
-    std::cout << "after second loop\n";
-
-}
 
 void MainWindow::on_radioButton_toggled(bool checked)
 {
     ui->progressBar->setValue(ui->progressBar->value()+1);
-    toDisplay = "index: " + QString::number(++counter) + "\n" + toDisplay;
-    // ui->label->setText(toDisplay);
-    QString msg = "This is the message" + QString::number(++counter);
-    appendMessage(msg.toStdString(), false);
     ui->plainTextEdit->setVisible(checked);
 }
-void MainWindow::myOutputFunction( std::string output , bool is_error )
-{
-	if( is_error == true )
-		std::cerr << output;
 
-	else
-		std::cout << output;
-}
-void MainWindow::testPass() {
-std::cout << "inside testPass\n";
-}
+
 // ** Helper Functions ** //
-void MainWindow::appendMessage(const std::string msg,const bool is_error) {
+void MainWindow::appendMessage(std::string msg,const bool is_error) {
     QString output = QString::fromStdString(msg);
     ui->plainTextEdit->appendPlainText(output);
 }
@@ -334,9 +293,9 @@ void MainWindow::on_Browse_output_clicked()
 
     if(dir.size() > 0) {
     outputFolderName = dir;
-        appendMessage(outputFolderName.toStdString() + " selected for output");
+        appendMessage(outputFolderName.toStdString() + " selected for output\n", false);
     }
     else {
-        appendMessage("No outputFolder Selected file selected");
+        appendMessage("No outputFolder Selected file selected\n", false);
     }
 }

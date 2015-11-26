@@ -8,6 +8,7 @@ Description:	Reads an oni file recorded using the Openni2 library and outputs po
 #include <pcl/io/openni2_grabber.h>
 #include <pcl/point_cloud.h>
 #include <vector>
+#include <boost/lockfree/spsc_queue.hpp>
 
 #ifndef _ONI_TO_PCD
 #define _ONI_TO_PCD
@@ -52,8 +53,25 @@ namespace vba {
 		/*
 		callback for our readOniFile, actually writes the pointcloud
 		*/
-		void writeCloudCb (const CloudConstPtr& cloud);	
-	int driver(int argc, char* argv[]);
+        void writeCloudCb (const CloudConstPtr& cloud);
+
+        /*
+         * driver that controls the oni to pcd conversion
+         */
+        int driver(int argc, char* argv[]);
+
+        /*
+         * Pre:  _outputBuffer points to a buffer that will be maintained by external user.
+         *       _outputBuffer is not nullptr
+         * Post: global outputBuffer points to _outputBuffer
+         */
+        void setOutputBuffer(boost::lockfree::spsc_queue<std::string>* _outputBuffer);
+
+        /*
+         * Pre:  outPut contains information to be displayed to the user
+         * Post: if outputBuffer has not been initialized then output will be sent to std::cout or std::cerr
+         */
+        void sendOutput(const std::string& output, bool error);
 	};
 };
 

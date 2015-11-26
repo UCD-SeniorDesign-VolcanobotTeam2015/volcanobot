@@ -18,6 +18,7 @@ Description:	Reads an oni file recorded using the Openni2 or Openni library and 
 #include <string>
 #include <cstring>
 
+
 namespace vba {
 	namespace oni2pcd {
 		int totalFrames = 0;
@@ -26,7 +27,10 @@ namespace vba {
 			currentReadFrame = 0,
 			frameSkip = 0,
 			timeout = 0;
-char* pcdWriteDirPath = NULL;
+            char* pcdWriteDirPath = NULL;
+            boost::lockfree::spsc_queue<std::string>* outputBuffer = NULL;
+            bool redirectOutputFlag = false;
+
 	}
 }
 //#include "../include/mainwindow.h"
@@ -53,7 +57,7 @@ int vba::oni2pcd::driver(int argc, char* argv[]){
 
 	const int REQ_ARGS = 3;
 	if (argc < REQ_ARGS) {
- 		std::cout << "\nNot enough arguments provided.\n";
+        sendOutput("\nNot enough arguments provided.\n", true);
  		return EXIT_FAILURE;
 	}
 
@@ -63,9 +67,9 @@ int vba::oni2pcd::driver(int argc, char* argv[]){
 	boost::thread oni2pcd(vba::oni2pcd::readOni, argv[1], argv[2], 0);
 
 	if (oni2pcd.try_join_for (boost::chrono::minutes(2))) {
-		std::cout << "\nDone\n";
+        sendOutput("\nDone\n", false);
 	} else {
-		std::cout << "\nBADDDDD!!!!!\n";
+        sendOutput("\nBADDDDD!!!!!\n", true);
 		return EXIT_FAILURE;
 	}
 
@@ -99,7 +103,7 @@ void vba::oni2pcd::readOni (const char* oniFile,
 	*/
 	vba::oni2pcd::setFrameSkip (framesToSkip);
 	vba::oni2pcd::setFrameInfo(grabber->getDevice()->getDepthFrameCount());
-	std::cout << "\nFrames to read " << vba::oni2pcd::framesToRead << '\n';
+    sendOutput("\nFrames to read " + vba::oni2pcd::framesToRead + '\n', false);
 
 	/*
 	set write pcd directory path
@@ -184,12 +188,38 @@ void vba::oni2pcd::writeCloudCb (const CloudConstPtr& cloud) {
 
 		ss << vba::oni2pcd::pcdWriteDirPath << "/frame_" << std::setfill ('0') << std::setw(6) << vba::oni2pcd::currentReadFrame << ".pcd";
 
-		std::cout <<"Wrote a cloud to " << ss.str() << '\n';
+        sendOutput("Wrote a cloud to " + ss.str() + '\n', false);
 		w.writeBinaryCompressed (ss.str(), *cloud);
 		++vba::oni2pcd::currentReadFrame;
 	}
 
 	++vba::oni2pcd::currentFrame;
+}
+
+void vba::oni2pcd::setOutputBuffer(boost::lockfree::spsc_queue<std::string>* _outputBuffer){
+    outputBuffer = _outputBuffer;
+    redirectOutputFlag = true;
+}
+
+void vba::oni2pcd::sendOutput(const std::string& output, bool error){
+    if( redirectOutputFlag == true )
+    {
+        if(outputBuffer->push(output)) {
+            std::cout << "[" << output << "] did not make it too buffer\n";
+        }
+    }
+
+    else
+    {
+        if( error == true )
+        {
+            std::cerr << output;
+        }
+        else
+        {
+            std::cout << output;
+        }
+    }
 }
 
 

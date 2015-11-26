@@ -71,17 +71,20 @@ namespace vba
 			*final += *result;
 			*final = this->filterCloud( final );
 
-			std::cout << "total point count: " << final->size() << "\n";
+            // output data
+            std::stringstream ss;
+            ss << "total point count: " << final->size() << "\n";
+            this->sendOutput(ss.str(), false);
+            // remove contents from stringstream
+            ss.str("");
 
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
 
-
-			std::stringstream ss;
 			ss << "temp_cloud" << i << ".pcd";
 			pcl::io::savePCDFile( ss.str() , *final , true );
 
-			this->sendOutput( "saved new pcd file\n", false );
+            this->sendOutput( "saved new pcd file\n", false );
 
 		}
 
@@ -248,7 +251,7 @@ namespace vba
 		{
 			
 			if(!this->output_buffer->push(output)) {
-				std::cout << "[" << output << "] did not make it too buffer\n";
+                std::cout << "[" << output << "] did not make it too output buffer\n";
 			}
 		}
 

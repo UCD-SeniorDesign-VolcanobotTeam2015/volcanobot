@@ -174,7 +174,6 @@ namespace vba
 	void CloudStitcher::setOutputBuffer( boost::lockfree::spsc_queue<std::string>* buf) 
 	{
 		this->output_buffer = buf;
-		this->output_buffer->push("hello to the other side");
 		this->redirect_output_flag = true;
 	}
 
@@ -219,7 +218,7 @@ namespace vba
 			}
 
 			std::stringstream output;
-			output<< "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
+            output<< "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
 			this->sendOutput( output.str() , false );
 			return 0;
 		}
@@ -312,11 +311,11 @@ namespace vba
 
 		//just printing some info to the user
 		std::stringstream output;
-		output << "Read in " << this->pcd_filenames->size() << " files.\n";
+        output << "Read in " << this->pcd_filenames->size() << " files.\n";
 		this->sendOutput( output.str() , false );
 
 		output.str("");
-		output << "Spinning up " << this->worker_threads->size() << " threads.\n\n";
+        output << "Spinning up " << this->worker_threads->size() << " threads.\n";
 		this->sendOutput( output.str() , false );
 
 
@@ -389,7 +388,7 @@ namespace vba
 			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->output_buffer ));
 		}
 
-		//otherwise we are going to divide up the filename array as evenly as possible among all the threads
+        //otherwise we are going to divide up the filename array as evenly as possible among all the threads
 		else
 		{
 			for( int i = 0 ; i < thread_count - 1 ; ++i )

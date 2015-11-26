@@ -26,7 +26,7 @@ public:
     void testPass();
 
 private:
-    void appendMessage(const std::string msg, const bool is_error = false);
+    void appendMessage(std::string msg, const bool is_error = false);
     void processOutputQueue();
 
 private slots:
@@ -37,7 +37,6 @@ private slots:
 
     void on_radioButton_toggled(bool checked);
 
-    void testFunction();
     void cloudStitcherController();
 
     void nextStep(const int&);
@@ -45,9 +44,11 @@ private slots:
 
     void on_Browse_output_clicked();
 
+    void ensureCursorVisible(QString);
+
 signals:
 
-    void appendToConcel(QString msg);
+    void appendToConsole(QString msg);
 
     void start(int);
     void oniToPCDFinished(int);
@@ -72,7 +73,6 @@ private:
 
     bool done;
 
-    void myOutputFunction( std::string output , bool is_error );
     void checkOutputBuffer();
 
     void oniToPCDController();

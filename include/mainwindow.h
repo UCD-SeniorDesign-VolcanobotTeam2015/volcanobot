@@ -64,7 +64,6 @@ private:
     QString oniFileName;
     QString toDisplay;
     QString outputFolderName;
-    int counter;
     boost::lockfree::spsc_queue<std::string>* outputBuffer;
 
 

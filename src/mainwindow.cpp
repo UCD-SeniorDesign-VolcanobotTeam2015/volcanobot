@@ -70,8 +70,8 @@ void MainWindow::clearTaskThread() {
         std::cout << "inside clear task with == NULL\n";
         return;
     }
-    std::cout << "inside taskThread != NULL \n";
     taskThread->join(); // this should return immeditly as the thread should already have finished if this function is called.
+    std::cout << "inside taskThread != NULL \n";
     delete taskThread;
     taskThread = NULL;
 }
@@ -102,12 +102,11 @@ void MainWindow::cloudStitcherController() {
     std::cout <<argv[1] << "-"; // '-' shows ending characters
     std::cout << "\n" << argv[2] << "-";
      */
-
+std::cout << "inside cloudstitchercontroller " << boost::this_thread::get_id() << std::endl;
     vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
-    std::string dir(this->outputFolderName.toStdString());
 
     std::string pcdFilesToStitchDir(this->outputFolderName.toStdString() + "/pcdTemp");
-    std::string stitchedOniOutputDir (this->outputFolderName.toStdString());
+    std::string stitchedOniOutputDir (this->outputFolderName.toStdString() + "/finalPointCloud");
     std::cout << "inside cloudstitcher and pcdFilestoSttichdir = " << pcdFilesToStitchDir << "-\n";
     std::cout << "inside cloudstitcher and stitchonioutputdir = " << stitchedOniOutputDir << "-\n";
 
@@ -174,6 +173,7 @@ void MainWindow::processOutputQueue(){
                 //this->appendMessage(temp, false);
                 QString output = QString::fromStdString(temp);
                 emit appendToConcel(output);
+                std::cout << "after appendtoconcel with " << output.toStdString() << "\n";
                 temp = ""; // clear value for saftey
             }
         }
@@ -188,7 +188,7 @@ void MainWindow::oniToPCDController(){
      dir contains where the pcdfiles will actually be output
      output contains where the final pointcloud file will be stored off of argv[2]
     */
-std::cout << "inside onittopcdcontroller\n";
+std::cout << "inside onittopcdcontroller " << boost::this_thread::get_id() << std::endl;
 if(outputFolderName == ""){
     appendMessage("No output directory selected. Please select an output folder where you would like the final oni to go.");
     return;
@@ -218,7 +218,8 @@ emit oniToPCDFinished(cloudStitcher);
 
 void MainWindow::on_Start_clicked()
 {
-    emit start(oniToPCD);
+    std::cout << "inside start " << boost::this_thread::get_id() << std::endl;
+    emit start(cloudStitcher);
 
 /*
  argv[2] contains path to output pcdfiles 

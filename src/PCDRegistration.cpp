@@ -71,19 +71,21 @@ namespace vba
 			*final += *result;
 			*final = this->filterCloud( final );
 
-			//std::cout << "total point count: " << final->size() << "\n";
-			std::cout << "File [ " << i << " / " << this->file_list->size() << " ] Stitched: " << final->size() << " Points.\n";
+            // output data
+            std::stringstream ss;
+            ss << "total point count: " << final->size() << "\n";
+            this->sendOutput(ss.str(), false);
+            // remove contents from stringstream
+            ss.str("");
 
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
 
-			/*
-			std::stringstream ss;
 			ss << "temp_cloud" << i << ".pcd";
 			pcl::io::savePCDFile( ss.str() , *final , true );
 
 			this->sendOutput( "saved new pcd file\n", false );
-			*/
+
 		}
 
 		std::stringstream filename;
@@ -236,9 +238,9 @@ namespace vba
 	}
 
 
-	void PCDRegistration::setOutputFunction( outputFunction function_pointer )
+	void PCDRegistration::setOutputBuffer( boost::lockfree::spsc_queue<std::string>* _output_buffer )
 	{
-		this->user_output_function = function_pointer;
+		this->output_buffer = _output_buffer;
 		this->redirect_output_flag = true;
 	}
 
@@ -247,7 +249,10 @@ namespace vba
 	{
 		if( this->redirect_output_flag )
 		{
-			this->user_output_function( output , is_error );
+			
+			if(!this->output_buffer->push(output)) {
+                std::cout << "[" << output << "] did not make it too output buffer\n";
+			}
 		}
 
 		else

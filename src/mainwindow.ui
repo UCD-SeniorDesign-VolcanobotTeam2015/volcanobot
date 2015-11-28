@@ -78,22 +78,6 @@
    <string>PointCloud and Mesh Generator</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>100</y>
-      <width>531</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QRadioButton" name="radioButton">
     <property name="geometry">
      <rect>
@@ -111,19 +95,6 @@
     </property>
     <property name="autoRepeat">
      <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QProgressBar" name="progressBar">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>60</y>
-      <width>118</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>0</number>
     </property>
    </widget>
    <widget class="QFrame" name="frame">
@@ -193,15 +164,24 @@
       <string>Select Output Folder</string>
      </property>
     </widget>
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>531</width>
+       <height>221</height>
+      </rect>
+     </property>
+    </widget>
+    <zorder>Browse_output</zorder>
     <zorder>Browse</zorder>
     <zorder>Start</zorder>
     <zorder>Cancel</zorder>
-    <zorder>Browse_output</zorder>
+    <zorder>plainTextEdit</zorder>
    </widget>
    <zorder>frame</zorder>
-   <zorder>label</zorder>
    <zorder>radioButton</zorder>
-   <zorder>progressBar</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

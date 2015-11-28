@@ -10,6 +10,7 @@
 #include <boost/atomic.hpp>
 #include <boost/lockfree/policies.hpp>
 #include <boost/thread.hpp>
+#include <../include/MeshConstructor.h>
 
 namespace Ui {
 class MainWindow;

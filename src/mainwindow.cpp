@@ -48,7 +48,6 @@ void MainWindow::ensureCursorVisible(QString s){
 
 void MainWindow::nextStep(const int& step) {
 
-    std::cout << "inside nextstep with " << step << " input\n";
     switch(step) {
 
     case ONITOPCD:
@@ -84,7 +83,20 @@ void MainWindow::clearTaskThread() {
 }
 
 void MainWindow::meshConstructorController() {
+    vba::MeshConstructor* mMeshConstructor = new vba::MeshConstructor();
 
+    //just pass in a string with the path to the stitched pcd file
+    mMeshConstructor->setInputFilename(this->outputFolderName.toStdString() + "/finalPointCloud.pcd" );
+
+    //pass in a string of the output path where the final mesh should be sent. The file does not have to exist already.
+    //The second parameter lets you choose the output filetype. I would just stick with PLY for now.
+    mMeshConstructor->setOutputFilename( this->outputFolderName.toStdString() + "/finished_mesh.ply" , vba::PLY );
+
+    //this does the rest
+    mMeshConstructor->constructMesh();
+
+    delete mMeshConstructor;
+    // emit meshConstructorFinished();
 }
 
 void MainWindow::cloudStitcherController() {
@@ -99,7 +111,7 @@ void MainWindow::cloudStitcherController() {
     vba::CloudStitcher* mCloudStitcher = new vba::CloudStitcher;
 
     std::string pcdFilesToStitchDir(this->outputFolderName.toStdString() + "/pcdTemp");
-    std::string stitchedOniOutputDir (this->outputFolderName.toStdString() + "/finalPointCloud");
+    std::string stitchedOniOutputDir (this->outputFolderName.toStdString() + "/finalPointCloud.pcd");
 
     mCloudStitcher->setOutputPath( stitchedOniOutputDir );
 

@@ -25,6 +25,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/filter.h>
 #include <pcl/surface/poisson.h>
+#include <boost/lockfree/spsc_queue.hpp>
 
 
 
@@ -56,12 +57,28 @@ namespace vba
 
 			int constructMesh();
 
+            void setOutputBuffer(boost::lockfree::spsc_queue<std::string>* q);
+
+            /*This a function used only in this component. It is called whenever we want to create output messages or
+             * error messages. If the user provided an output function we will use that. Otherwise we just print to
+             * standard output or standard error.
+             *
+             * @param: The string containing the message to be outputted.
+             * @param: True if the message is an error, false otherwise.
+             *
+             */
+            void sendOutput(std::string& output , bool is_error );
+
 		private:
 
 			std::string input_filename;
 			std::string output_filename;
 
+            boost::lockfree::spsc_queue<std::string>* output_buffer;
+            bool redirect_output_flag;
+
 			MESH_FILETYPE output_filetype;
+
 
 	};
 

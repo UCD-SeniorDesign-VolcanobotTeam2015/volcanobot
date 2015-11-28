@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     oni-to-pcd.cpp \
     PCDRegistration.cpp \
     ../build/CMakeFiles/3.4.0-rc2/CompilerIdC/CMakeCCompilerId.c \
-    ../build/CMakeFiles/feature_tests.c
+    ../build/CMakeFiles/feature_tests.c \
+    MeshConstructor.cpp
 
 HEADERS  += mainwindow.h \
     ../include/mainwindow.h \
@@ -35,6 +36,7 @@ HEADERS  += mainwindow.h \
     ../include/CloudStitcher.h \
     ../include/errorMsgHandler.h \
     ../include/oni-to-pcd.h \
-    ../include/PCDRegistration.h
+    ../include/PCDRegistration.h \
+    ../include/MeshConstructor.h
 
 FORMS    += mainwindow.ui

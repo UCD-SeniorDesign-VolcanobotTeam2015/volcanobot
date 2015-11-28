@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->plainTextEdit->setStyleSheet("QLabel {background-color : white; }");
-    counter = 0;
     ui->plainTextEdit->setReadOnly(true);
     ui->plainTextEdit->setCenterOnScroll(true);
     ui->plainTextEdit->ensureCursorVisible();
@@ -27,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(start(int)), this, SLOT(nextStep(int)));
     connect(this, SIGNAL(oniToPCDFinished(int)), this, SLOT(nextStep(int)));
     connect(this, SIGNAL(appendToConsole(QString)), this, SLOT(ensureCursorVisible(QString)));
+    connect(this, SIGNAL(cloudStitcherFinished(int)), this, SLOT(nextStep(int)));
     outputFolderName = "";
     oniFileName = "";
     taskThread = NULL;
@@ -51,19 +51,23 @@ void MainWindow::nextStep(const int& step) {
     std::cout << "inside nextstep with " << step << " input\n";
     switch(step) {
 
-    case oniToPCD:
+    case ONITOPCD:
         clearTaskThread();
         taskThread = new boost::thread(&MainWindow::oniToPCDController, this);
         break;
-    case cloudStitcher :
+    case CLOUDSTITCHER :
         clearTaskThread();
         taskThread = new boost::thread(&MainWindow::cloudStitcherController, this);
         break;
-
+    case MESHCONSTRUCTOR:
+        clearTaskThread();
+        taskThread = new boost::thread(&MainWindow::meshConstructorController, this);
+        break;
     default :
-        appendToConsole(QString("MESSAGE: Well this is embarassing, there seems to be an " +
-                                "error with my instruction set and I not quiet sure how to fix it. " +
-                                "I affraid I cannot continue processing. Please try again later."));
+        QString errmsg = "MESSAGE: Well this is embarassing, there seems to be an ";
+        errmsg += "error with my instruction set and I not quiet sure how to fix it. ";
+        errmsg += "I affraid I cannot continue processing. Please try again later.";
+        appendToConsole(errmsg);
         appendToConsole(QString("ERROR: Program execution stopped."));
         break;
     }
@@ -79,6 +83,9 @@ void MainWindow::clearTaskThread() {
     taskThread = NULL;
 }
 
+void MainWindow::meshConstructorController() {
+
+}
 
 void MainWindow::cloudStitcherController() {
 
@@ -102,7 +109,7 @@ void MainWindow::cloudStitcherController() {
 
     delete mCloudStitcher;
     return;
-    // emit cloudStitcherFinished();
+    emit cloudStitcherFinished(MESHCONSTRUCTOR);
 }
 
 void MainWindow::on_Browse_clicked()
@@ -175,13 +182,13 @@ void MainWindow::oniToPCDController(){
     std::cout << "\n" << argv[2] << "-";
     vba::oni2pcd::setOutputBuffer(this->outputBuffer);
     vba::oni2pcd::driver(argc, argv);
-    emit oniToPCDFinished(cloudStitcher);
+    emit oniToPCDFinished(CLOUDSTITCHER);
 
 }
 
 void MainWindow::on_Start_clicked()
 {
-    emit start(oniToPCD);
+    emit start(ONITOPCD);
 }
 
 

@@ -52,13 +52,15 @@ signals:
 
     void start(int);
     void oniToPCDFinished(int);
-    void cloudStitcherFinished();
+    void cloudStitcherFinished(int);
 
 
 private:
+
     // Const
-    static const int oniToPCD = 0;
-    static const int cloudStitcher = 1;
+    static const int ONITOPCD = 0;
+    static const int CLOUDSTITCHER = 1;
+    static const int MESHCONSTRUCTOR = 2;
 
     Ui::MainWindow *ui;
     QString oniFileName;
@@ -75,6 +77,7 @@ private:
     void checkOutputBuffer();
 
     void oniToPCDController();
+    void meshConstructorController();
     void clearTaskThread();
 
 

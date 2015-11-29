@@ -122,7 +122,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Cancel</string>
+      <string>Close</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Start">
@@ -148,7 +148,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Browse</string>
+      <string>Browse for ONI</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Browse_output">

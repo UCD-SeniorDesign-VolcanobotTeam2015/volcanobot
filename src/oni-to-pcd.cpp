@@ -204,7 +204,7 @@ void vba::oni2pcd::setOutputBuffer(boost::lockfree::spsc_queue<std::string>* _ou
 void vba::oni2pcd::sendOutput(const std::string& output, bool error){
     if( redirectOutputFlag == true )
     {
-        if(outputBuffer->push(output)) {
+        if(!outputBuffer->push(output)) {
             std::cout << "[" << output << "] did not make it too buffer\n";
         }
     }

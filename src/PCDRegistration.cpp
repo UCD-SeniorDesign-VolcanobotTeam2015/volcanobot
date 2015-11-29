@@ -45,7 +45,7 @@ namespace vba
 		Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity();
 		Eigen::Matrix4f pairTransform = Eigen::Matrix4f::Identity();
 
-		for (size_t i = 1; i < this->file_list->size (); ++i)
+		for (size_t i = 1; i < /*this->file_list->size()*/ 3; ++i)
 		{
 
 			pcl::io::loadPCDFile( this->file_list->at( i - 1 ) , *source );
@@ -81,16 +81,24 @@ namespace vba
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
 
-			ss << "temp_cloud" << i << ".pcd";
-			pcl::io::savePCDFile( ss.str() , *final , true );
+			//ss << "temp_cloud" << i << ".pcd";
+			//pcl::io::savePCDFile( ss.str() , *final , true );
 
-			this->sendOutput( "saved new pcd file\n", false );
+			ss << "registered cloud ";
+			ss << i;
+			ss << "/" << this->file_list->size();
+			ss << "\n";
+			this->sendOutput( ss.str() , false );
 
 		}
 
 		std::stringstream filename;
 		filename << this->output_filename << "final_cloud.pcd";
 		pcl::io::savePCDFile( filename.str() , *final , true );
+
+//		filename.str("");
+//		filename << this->output_filename << "finalPointCloud.ply";
+//		pcl::io::savePLYFileASCII( filename.str() , *final ); 
 
 		return 0;
 	}

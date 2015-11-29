@@ -16,6 +16,7 @@
 
 //include to perform standard io
 #include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
 
 //includes for point cloud filters
 #include <pcl/filters/voxel_grid.h>

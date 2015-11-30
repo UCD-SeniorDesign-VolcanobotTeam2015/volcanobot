@@ -45,7 +45,7 @@ namespace vba
 		Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity();
 		Eigen::Matrix4f pairTransform = Eigen::Matrix4f::Identity();
 
-		for (size_t i = 1; i < /*this->file_list->size()*/ 3; ++i)
+		for (size_t i = 1; i < this->file_list->size() ; ++i)
 		{
 
 			pcl::io::loadPCDFile( this->file_list->at( i - 1 ) , *source );

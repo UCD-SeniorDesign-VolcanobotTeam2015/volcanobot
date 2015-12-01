@@ -4,3 +4,4 @@
 *.oni
 *.pcd
 res/*
+build/*

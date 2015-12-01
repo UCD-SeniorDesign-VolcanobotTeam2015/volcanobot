@@ -15,6 +15,8 @@ namespace vba
 		this->output_filetype = PLY;
 		this->input_filename = "";
 		this->output_filename = "";
+        this->output_buffer = NULL;
+        this->redirect_output_flag = false;
 	}
 
 	MeshConstructor::~MeshConstructor()
@@ -80,6 +82,35 @@ namespace vba
 		this->output_filename = filename;
 		return 0;
 	}
+
+    void MeshConstructor::setOutputBuffer(boost::lockfree::spsc_queue<std::string>* q)
+    {
+        this->output_buffer = q;
+        this->redirect_output_flag = true;
+    }
+
+
+    void MeshConstructor::sendOutput( std::string& output , bool is_error )
+    {
+        if( this->redirect_output_flag == true )
+        {
+            if(!this->output_buffer->push(output)) {
+                std::cout << "[" << output << "] did not make it too buffer\n";
+            }
+        }
+
+        else
+        {
+            if( is_error == true )
+            {
+                std::cerr << output;
+            }
+            else
+            {
+                std::cout << output;
+            }
+        }
+    }
 
 	int MeshConstructor::constructMesh()
 	{

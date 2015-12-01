@@ -171,12 +171,11 @@ namespace vba
 		return 0;
 	}
 
-	void CloudStitcher::setOutputFunction( outputFunction function_pointer )
+	void CloudStitcher::setOutputBuffer( boost::lockfree::spsc_queue<std::string>* buf) 
 	{
-		this->user_output_function = function_pointer;
+		this->output_buffer = buf;
 		this->redirect_output_flag = true;
 	}
-
 
 	int CloudStitcher::stitchPCDFiles( const std::string directory_path )
 	{
@@ -219,7 +218,7 @@ namespace vba
 			}
 
 			std::stringstream output;
-			output<< "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
+            output<< "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
 			this->sendOutput( output.str() , false );
 			return 0;
 		}
@@ -312,11 +311,11 @@ namespace vba
 
 		//just printing some info to the user
 		std::stringstream output;
-		output << "Read in " << this->pcd_filenames->size() << " files.\n";
+        output << "Read in " << this->pcd_filenames->size() << " files.\n";
 		this->sendOutput( output.str() , false );
 
 		output.str("");
-		output << "Spinning up " << this->worker_threads->size() << " threads.\n\n";
+        output << "Spinning up " << this->worker_threads->size() << " threads.\n";
 		this->sendOutput( output.str() , false );
 
 
@@ -386,23 +385,23 @@ namespace vba
 		if( thread_count == 1 )
 		{
 			std::vector< std::string > param_vec( current_offset , this->pcd_filenames->end() );
-			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->user_output_function ));
+			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->output_buffer ));
 		}
 
-		//otherwise we are going to divide up the filename array as evenly as possible among all the threads
+        //otherwise we are going to divide up the filename array as evenly as possible among all the threads
 		else
 		{
 			for( int i = 0 ; i < thread_count - 1 ; ++i )
 			{
 				std::vector< std::string >::iterator last = ( current_offset + offset );
 				std::vector< std::string > param_vec( current_offset , last );
-				this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->user_output_function ));
+				this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->output_buffer ));
 				current_offset = last;
 			}
 
 			//to prevent a seg-fault we just copy whatever is left of the filename array into the last thread
 			std::vector< std::string > param_vec( current_offset , this->pcd_filenames->end() );
-			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->user_output_function ));
+			this->worker_threads->push_back( new CloudStitcher::CloudStitchingThread( param_vec , output_dir , this->output_buffer ));
 
 		}
 	}
@@ -447,7 +446,9 @@ namespace vba
 	{
 		if( this->redirect_output_flag == true )
 		{
-			this->user_output_function( output , is_error );
+			if(!this->output_buffer->push(output)) {
+				std::cout << "[" << output << "] did not make it too buffer\n";
+			}
 		}
 
 		else
@@ -467,7 +468,7 @@ namespace vba
 
 
 
-	CloudStitcher::CloudStitchingThread::CloudStitchingThread( const std::vector< std::string >& files , std::string output_dir , outputFunction function_pointer )
+	CloudStitcher::CloudStitchingThread::CloudStitchingThread( const std::vector< std::string >& files , std::string output_dir , boost::lockfree::spsc_queue<std::string>* _output_buffer )
 	{
 		//we will make a copy of the list of target filenames for this instance of the class
 		this->file_list = new std::vector< std::string >( files );
@@ -482,7 +483,7 @@ namespace vba
 		this->output_filename += filename.filename().string();
 
 		this->mPCDRegistration = new PCDRegistration( files , this->output_filename );
-		this->mPCDRegistration->setOutputFunction( function_pointer );
+		this->mPCDRegistration->setOutputBuffer( _output_buffer );
 	}
 
 	CloudStitcher::CloudStitchingThread::~CloudStitchingThread()

@@ -11,7 +11,8 @@ mainwindow.cpp
 errorMsgHandler.cpp 
 CloudStitcher.cpp 
 PCDRegistration.cpp
-cloud_registration.cpp)
+cloud_registration.cpp
+MeshConstructor.cpp)
 
 set (project_HEADERS 
 ../include/errorMsgHandler.h 
@@ -20,6 +21,7 @@ set (project_HEADERS
 ../include/CloudStitcher.h 
 ../include/PCDRegistration.h
 ../build/ui_mainwindow.h
+../include/MeshConstructor.h
 ../include)
 
 set (project_FORMS   mainwindow.ui)
@@ -34,7 +36,8 @@ errorMsgHandler.cpp
 mainwindow.cpp 
 CloudStitcher.cpp 
 PCDRegistration.cpp
-cloud_registration.cpp)
+cloud_registration.cpp
+MeshConstructor.cpp)
 
 include_directories (${PCL_INCLUDE_DIRS} 
 ../include)
@@ -44,6 +47,7 @@ include_directories (${QT_USE_FILE})
 link_directories (${PCL_LIBRARY_DIRS})
 
 add_definitions (${PCL_DEFINITIONS})
+
 
 QT4_WRAP_CPP (project_HEADERS_MOC   ${project_HEADERS})
 QT4_WRAP_UI (project_FORMS_HEADERS ${project_FORMS})

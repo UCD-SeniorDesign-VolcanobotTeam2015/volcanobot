@@ -26,6 +26,7 @@
 #include <pcl/filters/filter.h>
 #include <pcl/surface/poisson.h>
 #include <boost/lockfree/spsc_queue.hpp>
+#include <sstream>
 
 
 
@@ -67,7 +68,8 @@ namespace vba
              * @param: True if the message is an error, false otherwise.
              *
              */
-            void sendOutput(std::string& output , bool is_error );
+            void sendOutput(std::string output , bool is_error = false );
+            void sendOutput(std::stringstream& ss, bool is_error = false);
 
 		private:
 

@@ -220,6 +220,21 @@ namespace vba
 			std::stringstream output;
             output<< "Successfully outputted stitched pcd file to: " << this->output_path << "\n";
 			this->sendOutput( output.str() , false );
+
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud( new pcl::PointCloud<pcl::PointXYZRGB>() );
+	        pcl::io::loadPCDFile( this->output_path , *cloud );
+			std::string ply_path = this->output_path;
+			size_t position = ply_path.find( ".pcd" );
+			ply_path[ position ] = '.';
+			ply_path[ position + 1 ] = 'p';
+			ply_path[ position + 2 ] = 'l';
+			ply_path[ position + 3 ] = 'y';
+			pcl::io::savePLYFileASCII( ply_path , *cloud );
+
+			output.str("");
+			output << "Successfully outputed ply file to: " << ply_path << "\n";
+			this->sendOutput( output.str() , false );
+			
 			return 0;
 		}
 

@@ -85,6 +85,8 @@ void MainWindow::clearTaskThread() {
 void MainWindow::meshConstructorController() {
     vba::MeshConstructor* mMeshConstructor = new vba::MeshConstructor();
 
+    // pass outputbuffer
+    mMeshConstructor->setOutputBuffer(this->outputBuffer);
     //just pass in a string with the path to the stitched pcd file
     mMeshConstructor->setInputFilename(this->outputFolderName.toStdString() + "/finalPointCloud.pcd" );
 
@@ -120,8 +122,8 @@ void MainWindow::cloudStitcherController() {
     mCloudStitcher->stitchPCDFiles( pcdFilesToStitchDir );
 
     delete mCloudStitcher;
-    return;
     emit cloudStitcherFinished(MESHCONSTRUCTOR);
+    return;
 }
 
 void MainWindow::on_BrowseOni_clicked()

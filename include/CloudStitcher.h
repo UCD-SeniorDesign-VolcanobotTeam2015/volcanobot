@@ -36,6 +36,10 @@
 #include <boost/lockfree/spsc_queue.hpp>
 #include <string.h>
 
+#include <pcl/point_types.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/io/pcd_io.h>
+
 #ifndef CLOUDSTITCHER_H_
 #define CLOUDSTITCHER_H_
 

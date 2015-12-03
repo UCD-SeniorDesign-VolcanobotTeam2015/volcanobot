@@ -65,9 +65,9 @@ int vba::oni2pcd::driver(int argc, char* argv[]){
 	boost::thread oni2pcd(vba::oni2pcd::readOni, argv[1], argv[2], 0);
 
 	if (oni2pcd.try_join_for (boost::chrono::minutes(2))) {
-        sendOutput("\nDone\n", false);
+        sendOutput("\nFinished reading .oni(s).\n", false);
 	} else {
-        sendOutput("\nBADDDDD!!!!!\n", true);
+        sendOutput("\nEncountered a problem reading .oni(s).\n", true);
 		return EXIT_FAILURE;
 	}
 
@@ -96,7 +96,7 @@ void vba::oni2pcd::readOni (const char* oniFile,
 	try {
 		grabber = new pcl::io::OpenNI2Grabber (oniFile);
 	} catch (pcl::IOException pclIo) {
-		std::cerr << "\nError: Could not open the supplied .oni. The file may be corrupted. No files will be written.\n";
+		sendOutput("\nError: Could not open the supplied .oni. The file may be corrupted. No files will be written.\n", true);
 		return;
 	}
 
@@ -195,7 +195,7 @@ void vba::oni2pcd::writeCloudCb (const CloudConstPtr& cloud) {
 
 		ss << vba::oni2pcd::pcdWriteDirPath << "/frame_" << std::setfill ('0') << std::setw(6) << vba::oni2pcd::currentReadFrame << ".pcd";
 
-        sendOutput("Wrote a cloud to " + ss.str() + '\n', false);
+        sendOutput("\nWrote a cloud to " + ss.str() + '\n', false);
 		w.writeBinaryCompressed (ss.str(), *cloud);
 		++vba::oni2pcd::currentReadFrame;
 	}

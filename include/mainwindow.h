@@ -38,7 +38,7 @@ private slots:
 
     void on_radioButton_toggled(bool checked);
 
-    void on_Browse_output_clicked();
+    void on_BrowseOutput_clicked();
 
     void ensureCursorVisible(QString);
     void nextStep(const int& step);

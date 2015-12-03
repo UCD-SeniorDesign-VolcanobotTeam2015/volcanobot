@@ -203,7 +203,7 @@ void MainWindow::appendMessage(std::string msg,const bool is_error) {
     ui->plainTextEdit->appendPlainText(output);
 }
 
-void MainWindow::on_Browse_output_clicked()
+void MainWindow::on_BrowseOutput_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
                                                 QDir::homePath(),

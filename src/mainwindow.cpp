@@ -197,12 +197,12 @@ void MainWindow::on_radioButton_toggled(bool checked)
     ui->plainTextEdit->ensureCursorVisible();
 }
 
-
 // ** Helper Functions ** //
 void MainWindow::appendMessage(std::string msg,const bool is_error) {
     QString output = QString::fromStdString(msg);
     ui->plainTextEdit->appendPlainText(output);
 }
+
 void MainWindow::on_Browse_output_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
@@ -217,6 +217,24 @@ void MainWindow::on_Browse_output_clicked()
     else {
         appendMessage("No outputFolder Selected file selected\n", false);
     }
+}
+
+void MainWindow::processOutputQueue(){
+    std::string temp = "";
+    boost::posix_time::seconds waitTime(5);
+    while(!done || !this->outputBuffer->empty()){
+        if(this->outputBuffer->empty()){
+            boost::this_thread::sleep(waitTime);
+        }
+        else {
+            if(this->outputBuffer->pop(temp)) {
+                QString output = QString::fromStdString(temp);
+                emit appendToConsole(output);
+                temp = ""; // clear value for safety
+            }
+        }
+    }
+    return;
 }
 
 // run moc ../include/mainwindow.h -o moc_mainwindow.cpp from the build directory of the project to generate

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project( VBA )
 
 find_package (Qt4 REQUIRED)
-find_package (PCL 1.8 REQUIRED visualization features)
+find_package (PCL 1.8 REQUIRED visualization features surface)
 
 set (PROJECT_SOURCES 
 main.cpp 

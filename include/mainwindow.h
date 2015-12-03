@@ -41,7 +41,7 @@ private slots:
     void on_Browse_output_clicked();
 
     void ensureCursorVisible(QString);
-    void MainWindow::nextStep(const int& step);
+    void nextStep(const int& step);
 
 signals:
 

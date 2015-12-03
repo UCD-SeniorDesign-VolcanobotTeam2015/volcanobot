@@ -5,7 +5,8 @@
  *      Author: matt
  */
 
-#include "MeshConstructor.h"
+#include "../include/MeshConstructor.h"
+#include <pcl/surface/poisson.h>
 
 namespace vba
 {
@@ -19,10 +20,10 @@ namespace vba
         this->redirect_output_flag = false;
 	}
 
-	MeshConstructor::~MeshConstructor()
-	{
+	// MeshConstructor::~MeshConstructor()
+	// {
 
-	}
+	// }
 
 	int MeshConstructor::setInputFilename( std::string filename )
 	{
@@ -239,3 +240,4 @@ namespace vba
 	}
 
 } /* namespace vba */
+

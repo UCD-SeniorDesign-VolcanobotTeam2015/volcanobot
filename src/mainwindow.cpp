@@ -5,7 +5,7 @@
 #include "../include/CloudStitcher.h"
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
-
+#include "../include/MeshConstructor.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

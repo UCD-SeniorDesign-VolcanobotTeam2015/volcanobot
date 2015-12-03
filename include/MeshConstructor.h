@@ -50,7 +50,7 @@ namespace vba
 		public:
 
 			MeshConstructor();
-			~MeshConstructor();
+			// ~MeshConstructor();
 
 			int setInputFilename( std::string filename );
 

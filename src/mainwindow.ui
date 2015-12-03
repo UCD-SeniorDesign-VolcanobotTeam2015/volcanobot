@@ -151,7 +151,7 @@
       <string>Select .Oni File</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Browse_output">
+    <widget class="QPushButton" name="BrowseOutput">
      <property name="geometry">
       <rect>
        <x>190</x>
@@ -174,10 +174,10 @@
       </rect>
      </property>
     </widget>
-    <zorder>Browse_output</zorder>
-    <zorder>Browse</zorder>
+    <zorder>BrowseOutput</zorder>
+    <zorder>BrowseOni</zorder>
     <zorder>Start</zorder>
-    <zorder>Cancel</zorder>
+    <zorder>Close</zorder>
     <zorder>plainTextEdit</zorder>
    </widget>
    <zorder>frame</zorder>

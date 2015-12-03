@@ -41,6 +41,7 @@ private slots:
     void on_Browse_output_clicked();
 
     void ensureCursorVisible(QString);
+    void MainWindow::nextStep(const int& step);
 
 signals:
 
@@ -73,8 +74,10 @@ private:
     void checkOutputBuffer();
 
     void oniToPCDController();
+    void cloudStitcherController();
     void meshConstructorController();
     void clearTaskThread();
+
 
 
 };

@@ -5,7 +5,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
 #include <string>
-#include <QPlainTextEdit>
+#include <QtGui/QPlainTextEdit>
 #include <boost/lockfree/spsc_queue.hpp>
 #include <boost/atomic.hpp>
 #include <boost/lockfree/policies.hpp>

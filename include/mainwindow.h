@@ -5,11 +5,17 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
 #include <string>
-
+#include <QtGui/QPlainTextEdit>
+#include <boost/lockfree/spsc_queue.hpp>
+#include <boost/atomic.hpp>
+#include <boost/lockfree/policies.hpp>
+#include <boost/thread.hpp>
+#include <../include/MeshConstructor.h>
 
 namespace Ui {
 class MainWindow;
-};
+}
+//class MainWindow;
 
 class MainWindow : public QMainWindow
 {
@@ -18,6 +24,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void testPass();
+
+private:
+    void appendMessage(std::string msg, const bool is_error = false);
+    void processOutputQueue();
 
 private slots:
     void on_BrowseOni_clicked();
@@ -29,12 +40,46 @@ private slots:
 
     void on_BrowseOutput_clicked();
 
+    void ensureCursorVisible(QString);
+    void nextStep(const int& step);
+
+signals:
+
+    void appendToConsole(QString msg);
+
+    void start(int);
+    void oniToPCDFinished(int);
+    void cloudStitcherFinished(int);
+
+
 private:
+
+    // Const
+    static const int ONITOPCD = 0;
+    static const int CLOUDSTITCHER = 1;
+    static const int MESHCONSTRUCTOR = 2;
+
     Ui::MainWindow *ui;
     QString oniFileName;
+    QString toDisplay;
     QString outputFolderName;
+    boost::lockfree::spsc_queue<std::string>* outputBuffer;
 
-    static void myOutputFunction( std::string output , bool is_error );
+
+    boost::thread* outputMessageThread;
+    boost::thread* taskThread;
+
+    bool done;
+
+    void checkOutputBuffer();
+
+    void oniToPCDController();
+    void cloudStitcherController();
+    void meshConstructorController();
+    void clearTaskThread();
+
+
+
 };
 
 #endif // MAINWINDOW_H

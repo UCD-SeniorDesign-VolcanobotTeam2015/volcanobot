@@ -45,7 +45,7 @@ namespace vba
 		Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity();
 		Eigen::Matrix4f pairTransform = Eigen::Matrix4f::Identity();
 
-		for (size_t i = 1; i < this->file_list->size (); ++i)
+		for (size_t i = 1; i < this->file_list->size() ; ++i)
 		{
 
 			pcl::io::loadPCDFile( this->file_list->at( i - 1 ) , *source );
@@ -71,15 +71,34 @@ namespace vba
 			*final += *result;
 			*final = this->filterCloud( final );
 
-			std::cout << "total point count: " << final->size() << "\n";
+            // output data
+            std::stringstream ss;
+            ss << "total point count: " << final->size() << "\n";
+            this->sendOutput(ss.str(), false);
+            // remove contents from stringstream
+            ss.str("");
 
 			//update the global transform
 			GlobalTransform = GlobalTransform * pairTransform;
+
+			//ss << "temp_cloud" << i << ".pcd";
+			//pcl::io::savePCDFile( ss.str() , *final , true );
+
+			ss << "registered cloud ";
+			ss << i;
+			ss << "/" << this->file_list->size();
+			ss << "\n";
+			this->sendOutput( ss.str() , false );
+
 		}
 
 		std::stringstream filename;
 		filename << this->output_filename << "final_cloud.pcd";
 		pcl::io::savePCDFile( filename.str() , *final , true );
+
+//		filename.str("");
+//		filename << this->output_filename << "finalPointCloud.ply";
+//		pcl::io::savePLYFileASCII( filename.str() , *final ); 
 
 		return 0;
 	}
@@ -108,7 +127,7 @@ namespace vba
 		*src = this->filterCloud( cloud_src );
 		*tgt = this->filterCloud( cloud_tgt );
 
-		
+		/*
 		// ICP object.
 		PointCloud::Ptr finalCloud(new PointCloud);
 		pcl::IterativeClosestPoint<PointT , PointT> registration;
@@ -142,7 +161,7 @@ namespace vba
 		// *output = *src;
 
 
-		
+		*/
 
 
 		  // Compute surface normals and curvature
@@ -227,9 +246,9 @@ namespace vba
 	}
 
 
-	void PCDRegistration::setOutputFunction( outputFunction function_pointer )
+	void PCDRegistration::setOutputBuffer( boost::lockfree::spsc_queue<std::string>* _output_buffer )
 	{
-		this->user_output_function = function_pointer;
+		this->output_buffer = _output_buffer;
 		this->redirect_output_flag = true;
 	}
 
@@ -238,7 +257,10 @@ namespace vba
 	{
 		if( this->redirect_output_flag )
 		{
-			this->user_output_function( output , is_error );
+			
+			if(!this->output_buffer->push(output)) {
+                std::cout << "[" << output << "] did not make it too output buffer\n";
+			}
 		}
 
 		else

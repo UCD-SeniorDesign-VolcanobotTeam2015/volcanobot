@@ -11,33 +11,33 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = vbaUI
 TEMPLATE = app
 
-# Input
-INCLUDEPATH += /usr/local/Cellar/boost/1.59.0/include \
-			/usr/local/Cellar/pcl/HEAD/include/pcl-1.8 \
-			/usr/local/Cellar/eigen/3.2.6/include/eigen3 \ 
-			/usr/local/Cellar/flann/1.8.4_1/include \
-			/usr/local/Cellar/vtk/6.3.0/include/vtk-6.3 \
-# 			/usr/local/Cellar/openni2/2.2.0.33/include/ni2
 
-# LIBS +=  /usr/local/Cellar/boost/1.59.0/lib \
-# 			/usr/local/Cellar/pcl/HEAD/lib \
-# 			/usr/local/Cellar/eigen/3.2.6/lib \
-# 			/usr/local/Cellar/flann/1.8.4_1/lib \
-# 			/usr/local/Cellar/vtk/6.3.0/lib \
-# 			/usr/local/Cellar/openni2/2.2.0.33/lib
+SOURCES += main.cpp\
+        mainwindow.cpp \
+    ../build/__/include/moc_CloudStitcher.cxx \
+    ../build/__/include/moc_errorMsgHandler.cxx \
+    ../build/__/include/moc_mainwindow.cxx \
+    ../build/__/include/moc_oni-to-pcd.cxx \
+    ../build/__/include/moc_PCDRegistration.cxx \
+    ../build/CMakeFiles/3.4.0-rc2/CompilerIdCXX/CMakeCXXCompilerId.cpp \
+    ../build/CMakeFiles/feature_tests.cxx \
+    cloud_registration.cpp \
+    CloudStitcher.cpp \
+    errorMsgHandler.cpp \
+    oni-to-pcd.cpp \
+    PCDRegistration.cpp \
+    ../build/CMakeFiles/3.4.0-rc2/CompilerIdC/CMakeCCompilerId.c \
+    ../build/CMakeFiles/feature_tests.c \
+    MeshConstructor.cpp
 
-HEADERS += ../include/oni-to-pcd.h \
-           ../include/errorMsgHandler.h \
-           ../include/mainwindow.h \
-           ../include/CloudStitcher.h \
-           ../include/PCDRegistration.h
+HEADERS  += mainwindow.h \
+    ../include/mainwindow.h \
+    ../build/ui_mainwindow.h \
+    ../include/CloudStitcher.h \
+    ../include/errorMsgHandler.h \
+    ../include/oni-to-pcd.h \
+    ../include/PCDRegistration.h \
+    ../include/MeshConstructor.h
 
-FORMS += ../src/mainwindow.ui
 
-SOURCES += ../src/cloud_registration.cpp \
-           ../src/CloudStitcher.cpp \
-           ../src/errorMsgHandler.cpp \
-           ../src/main.cpp \
-           ../src/mainwindow.cpp \
-           ../src/oni-to-pcd.cpp \
-           ../src/PCDRegistration.cpp 
+FORMS    += mainwindow.ui

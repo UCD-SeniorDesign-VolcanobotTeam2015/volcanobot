@@ -16,6 +16,7 @@
 
 //include to perform standard io
 #include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
 
 //includes for point cloud filters
 #include <pcl/filters/voxel_grid.h>
@@ -32,6 +33,9 @@
 //include for the actual viewing of point clouds on screen
 #include <pcl/visualization/pcl_visualizer.h>
 
+// include for output buffer
+#include <boost/lockfree/spsc_queue.hpp>
+
 
 
 
@@ -39,9 +43,6 @@
 
 namespace vba
 {
-
-	//Just typedeffing the signature of a function pointer we can accept from the user for output redirection
-	typedef void (*outputFunction ) (std::string output , bool is_error );
 
 
 	typedef pcl::PointXYZRGB PointT;
@@ -97,7 +98,7 @@ namespace vba
 			 * @param: Function pointer following the signature   void functionName( std::string )
 			 *
 			 */
-			void setOutputFunction( outputFunction function_pointer );
+			void setOutputBuffer( boost::lockfree::spsc_queue<std::string>* output_buffer );
 
 			void setFilterLeafSize( float x , float y , float z );
 
@@ -124,7 +125,7 @@ namespace vba
 			std::vector< std::string >* file_list;
 			std::string output_filename;
 
-			outputFunction user_output_function;
+			boost::lockfree::spsc_queue<std::string>* output_buffer;
 			bool redirect_output_flag;
 
 			float filter_leaf_size_x;

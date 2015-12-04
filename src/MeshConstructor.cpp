@@ -235,6 +235,10 @@ namespace vba
 			break;
 		}
 
+		ss.str("");
+        ss << "\n\n\n***COMPLETED***\n\n\n";
+        this->sendOutput(ss);
+
 		return 0;
 
 	}

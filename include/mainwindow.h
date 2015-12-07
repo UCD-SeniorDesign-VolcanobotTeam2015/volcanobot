@@ -55,7 +55,8 @@ private:
 private slots:
 
     /*
-     * Post: Opens file explorer to choose .oni file
+     * Post: Opens file explorer to choose .oni file. 
+     *       Path is stored in onifileName
      */
     void on_Browse_clicked();
     /*
@@ -68,7 +69,7 @@ private slots:
      */
     void on_Start_clicked();
     /*
-     * Post: display concole visibility is toggled
+     * Post: display console visibility is toggled
      */
     void on_radioButton_toggled(bool checked);
     /*
